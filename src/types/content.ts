@@ -23,6 +23,8 @@ export type MenuItem = {
   description?: string
   priceMad?: number
   image?: string
+  imageAlt?: string
+  imageStatus?: 'temporary-generated' | 'verified'
   homepageFeatured?: boolean
 }
 

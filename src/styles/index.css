@@ -35,7 +35,13 @@
   --text-display: clamp(3rem, 10vw, 7.75rem);
   --text-display--line-height: 0.88;
   --text-display--letter-spacing: -0.02em;
+
+  --text-hero: clamp(3rem, 8.5vw, 7rem);
+  --text-hero--line-height: 0.88;
+  --text-hero--letter-spacing: -0.02em;
 }
+
+@custom-variant short (@media (max-height: 800px));
 
 @layer base {
   html {
