@@ -49,3 +49,10 @@ export type GalleryItem = {
   postUrl?: string
   aspect: 'square' | 'portrait' | 'landscape'
 }
+
+export type HeatLevelId = 'douce' | 'moyenne' | 'forte' | 'tres-forte'
+
+export type HeatLevel = {
+  id: HeatLevelId
+  label: string
+}

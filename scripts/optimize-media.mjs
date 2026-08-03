@@ -43,6 +43,26 @@ const jobs = [
     output: 'src/assets/dishes/feast-platter.webp',
     width: 1200,
   },
+  {
+    input: 'src/assets/restaurant/heat-levels/douce.png',
+    output: 'src/assets/restaurant/heat-levels/douce.webp',
+    width: 1200,
+  },
+  {
+    input: 'src/assets/restaurant/heat-levels/moyenne.png',
+    output: 'src/assets/restaurant/heat-levels/moyenne.webp',
+    width: 1200,
+  },
+  {
+    input: 'src/assets/restaurant/heat-levels/forte.png',
+    output: 'src/assets/restaurant/heat-levels/forte.webp',
+    width: 1200,
+  },
+  {
+    input: 'src/assets/restaurant/heat-levels/tres-forte.png',
+    output: 'src/assets/restaurant/heat-levels/tres-forte.webp',
+    width: 1200,
+  },
 ]
 
 for (const job of jobs) {

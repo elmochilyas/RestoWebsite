@@ -1,4 +1,5 @@
 export { restaurant } from './restaurant'
 export { menuItems } from './menu'
+export { heatLevels, heatSection } from './heatLevels'
 export { reviews, reputationThemes } from './reviews'
 export { gallery } from './gallery'

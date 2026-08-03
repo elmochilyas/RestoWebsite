@@ -69,13 +69,13 @@ export function Hero() {
 
       <div className="relative z-10 flex flex-1 flex-col justify-start lg:justify-end">
         <Container className="pt-10 pb-12 sm:pt-14 sm:pb-14 lg:pb-16 short:pt-8 short:pb-14 short:lg:pb-24">
-          <motion.p
+          <motion.div
             initial={reduce ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.05, ease: 'easeOut' }}
           >
             <Eyebrow>Agadir bay</Eyebrow>
-          </motion.p>
+          </motion.div>
 
           <h1 className="mt-5 font-display text-hero uppercase text-cream sm:mt-8 short:mt-4 short:sm:mt-6">
             {headlineLines.map((line, index) => (
