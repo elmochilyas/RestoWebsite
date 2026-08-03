@@ -1,1 +1,79 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-coal-950: #120d0a;
+  --color-coal-900: #1a120e;
+  --color-ink: #241712;
+  --color-cream: #f6ead7;
+  --color-paper: #fff7e9;
+  --color-peri-red: #e7371f;
+  --color-ember: #ff6a1a;
+  --color-mustard: #f2b536;
+  --color-smoke: #a89a8f;
+
+  --color-line-dark: rgba(246, 234, 215, 0.18);
+  --color-line-light: rgba(36, 23, 18, 0.16);
+
+  --font-display: 'Archivo Black', 'Arial Black', ui-sans-serif, system-ui,
+    sans-serif;
+  --font-body: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+
+  --container-content: 82.5rem;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.4;
+  --text-eyebrow--letter-spacing: 0.16em;
+  --text-eyebrow--font-weight: 700;
+
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.65;
+
+  --text-h2: clamp(2.125rem, 5vw, 5rem);
+  --text-h2--line-height: 1;
+  --text-h2--letter-spacing: -0.015em;
+
+  --text-display: clamp(3rem, 10vw, 7.75rem);
+  --text-display--line-height: 0.88;
+  --text-display--letter-spacing: -0.02em;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-coal-950 font-body text-cream antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-peri-red);
+    color: var(--color-cream);
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-peri-red);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
