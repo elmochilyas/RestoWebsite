@@ -63,6 +63,36 @@ const jobs = [
     output: 'src/assets/restaurant/heat-levels/tres-forte.webp',
     width: 1200,
   },
+  {
+    input: 'src/assets/restaurant/gallery/grill-flames-chicken.png',
+    output: 'src/assets/restaurant/gallery/grill-flames-chicken.webp',
+    width: 1400,
+  },
+  {
+    input: 'src/assets/restaurant/gallery/shared-table.png',
+    output: 'src/assets/restaurant/gallery/shared-table.webp',
+    width: 1400,
+  },
+  {
+    input: 'src/assets/restaurant/gallery/charred-chicken-closeup.png',
+    output: 'src/assets/restaurant/gallery/charred-chicken-closeup.webp',
+    width: 1150,
+  },
+  {
+    input: 'src/assets/restaurant/gallery/peri-peri-sauces.png',
+    output: 'src/assets/restaurant/gallery/peri-peri-sauces.webp',
+    width: 1150,
+  },
+  {
+    input: 'src/assets/restaurant/gallery/chef-grilling-chicken.png',
+    output: 'src/assets/restaurant/gallery/chef-grilling-chicken.webp',
+    width: 1050,
+  },
+  {
+    input: 'src/assets/restaurant/gallery/restaurant-atmosphere.png',
+    output: 'src/assets/restaurant/gallery/restaurant-atmosphere.webp',
+    width: 1050,
+  },
 ]
 
 for (const job of jobs) {

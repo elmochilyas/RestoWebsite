@@ -17,6 +17,12 @@ import chickenRice from '../assets/dishes/chicken-rice.webp'
 import chickenWrap from '../assets/dishes/chicken-wrap.webp'
 import periPeriWings from '../assets/dishes/peri-peri-wings.webp'
 import feastPlatter from '../assets/dishes/feast-platter.webp'
+import galleryGrillFlamesChicken from '../assets/restaurant/gallery/grill-flames-chicken.webp'
+import galleryChefGrillingChicken from '../assets/restaurant/gallery/chef-grilling-chicken.webp'
+import galleryCharredChickenCloseup from '../assets/restaurant/gallery/charred-chicken-closeup.webp'
+import gallerySharedTable from '../assets/restaurant/gallery/shared-table.webp'
+import galleryPeriPeriSauces from '../assets/restaurant/gallery/peri-peri-sauces.webp'
+import galleryRestaurantAtmosphere from '../assets/restaurant/gallery/restaurant-atmosphere.webp'
 
 export const heroMedia = {
   src: heroGrilledChicken,
@@ -71,3 +77,36 @@ export const dishMedia = {
     alt: 'Large platter of flame-grilled chicken with sides',
   },
 } satisfies Record<string, { src: string; alt: string }>
+
+export const galleryMedia = {
+  grillFlamesChicken: {
+    src: galleryGrillFlamesChicken,
+    alt: 'Flame-grilled chicken cooking over an open charcoal grill',
+    status: 'temporary-generated' as const,
+  },
+  chefGrillingChicken: {
+    src: galleryChefGrillingChicken,
+    alt: 'Chef turning grilled chicken over open flames with metal tongs',
+    status: 'temporary-generated' as const,
+  },
+  charredChickenCloseup: {
+    src: galleryCharredChickenCloseup,
+    alt: 'Close-up of grilled chicken with caramelized charred edges',
+    status: 'temporary-generated' as const,
+  },
+  sharedTable: {
+    src: gallerySharedTable,
+    alt: 'Shared table with grilled chicken, fries, rice, salad and sauces',
+    status: 'temporary-generated' as const,
+  },
+  periPeriSauces: {
+    src: galleryPeriPeriSauces,
+    alt: 'Selection of sauces and dips served beside grilled food',
+    status: 'temporary-generated' as const,
+  },
+  restaurantAtmosphere: {
+    src: galleryRestaurantAtmosphere,
+    alt: 'Warm restaurant dining scene with grilled food and guests',
+    status: 'temporary-generated' as const,
+  },
+} satisfies Record<string, { src: string; alt: string; status: 'temporary-generated' }>

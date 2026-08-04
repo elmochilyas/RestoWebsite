@@ -48,6 +48,9 @@ export type GalleryItem = {
   caption?: string
   postUrl?: string
   aspect: 'square' | 'portrait' | 'landscape'
+  layoutRole?: 'anchor' | 'portrait' | 'action' | 'wide' | 'detail' | 'support'
+  objectPosition?: string
+  zoom?: number
 }
 
 export type HeatLevelId = 'douce' | 'moyenne' | 'forte' | 'tres-forte'
