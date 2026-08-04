@@ -4,10 +4,19 @@ A proposal-ready showcase website for **Peri Peri Grill — Agadir Bay**, built 
 
 Frontend-only static site. React + TypeScript + Vite, Tailwind CSS v4, Lucide React, and Motion for React. Deploys to Vercel as a normal Vite project (`dist/`).
 
+## Tech stack
+
+- React 19 + TypeScript
+- Vite 8
+- Tailwind CSS v4
+- Lucide React (icons)
+- Motion for React (animation)
+- OxLint (linting)
+
 ## Getting started
 
 ```bash
-npm install     # install dependencies
+npm ci          # install dependencies (clean install)
 npm run dev     # start the dev server
 ```
 
@@ -19,6 +28,29 @@ npm run build    # typecheck + production build -> dist/
 npm run preview  # preview the production build locally
 npm run lint     # run oxlint
 ```
+
+## Deployment
+
+This project deploys to **Vercel** via GitHub integration.
+
+- **Pull requests** and **non-main branches** receive Vercel **Preview** deployments.
+- **main** branch is the **Production** deployment.
+- **GitHub Actions** runs lint and build checks on every push to `main` and on every PR.
+- Vercel owns all deployment — no custom deploy scripts or CI deployment secrets are used.
+
+### Workflow
+
+1. Create a feature branch
+2. Push and open a PR
+3. GitHub CI runs `npm ci`, `npm run lint`, `npm run build`
+4. Vercel automatically creates a Preview deployment
+5. Review the Preview URL
+6. Merge to `main`
+7. Vercel deploys to Production automatically
+
+### Environment variables
+
+No environment variables are currently required. The site is fully static.
 
 ## Project source of truth
 
