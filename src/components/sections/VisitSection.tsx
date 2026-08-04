@@ -158,7 +158,7 @@ export function VisitSection() {
             className="mt-12 lg:col-span-7 lg:col-start-6 lg:mt-0"
             {...(reduce ? {} : mapMotion)}
           >
-            <div className="h-[300px] overflow-hidden rounded-[14px] bg-coal-900 sm:h-[340px] md:h-[400px] lg:h-[480px]">
+            <div className="h-[300px] overflow-hidden rounded-[20px] bg-coal-900 sm:h-[340px] md:h-[400px] lg:h-[480px]">
               <iframe
                 src={mapEmbedUrl}
                 title={`Map showing ${restaurant.name} in ${restaurant.locationName}, ${restaurant.city}`}

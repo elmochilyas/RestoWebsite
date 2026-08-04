@@ -24,6 +24,7 @@ export const restaurant = {
     instagram: 'https://www.instagram.com/africanaperiperigrill',
     website: 'https://periperigrill.ma/',
     glovo: 'https://glovoapp.com/fr/ma/agadir/stores/peri-peri-grill-agadir-bay-agd',
+    whatsapp: 'https://wa.me/+212609470316',
   },
   publicInfo: {
     lastChecked: '2026-08-03',

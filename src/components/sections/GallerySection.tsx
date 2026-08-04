@@ -77,7 +77,7 @@ function GalleryImage({
       variants={reduce ? undefined : itemVariants}
       className={`${layout.base} ${layout.md} ${layout.lg}`}
     >
-      <div className="group h-full w-full overflow-hidden rounded-[10px] bg-coal-900">
+      <div className="group h-full w-full overflow-hidden rounded-[20px] bg-coal-900">
         <div className="h-full w-full" style={{ scale: item.zoom ?? 1 }}>
           <img
             src={item.image}

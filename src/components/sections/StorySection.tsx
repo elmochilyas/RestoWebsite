@@ -40,7 +40,7 @@ function StoryBeat({
     if (active) setSeen(true)
   }, [active])
 
-  const opacity = reduce ? 1 : !seen ? 0 : isDesktop ? (active ? 1 : 0.35) : 1
+  const opacity = reduce ? 1 : !seen ? 0 : isDesktop ? (active ? 1 : 0.5) : 1
   const y = reduce ? 0 : seen ? 0 : 18
 
   return (
@@ -49,17 +49,17 @@ function StoryBeat({
       initial={false}
       animate={{ opacity, y }}
       transition={{ duration: reduce ? 0 : 0.45, ease: EASE_OUT }}
-      className="max-w-[32ch]"
+      className=""
     >
       <div className="flex items-baseline gap-3">
-        <span className="text-[0.8rem] font-bold tracking-[0.16em] text-peri-red">
+        <span className="text-[1rem] font-bold tracking-[0.16em] text-peri-red">
           {String(index + 1).padStart(2, '0')}
         </span>
-        <h3 className="text-[0.875rem] font-bold uppercase tracking-[0.14em] text-ink sm:text-[0.9375rem]">
+        <h3 className="font-display text-[1.125rem] uppercase tracking-[0.14em] text-ink sm:text-[1.25rem]">
           {beat.title}
         </h3>
       </div>
-      <p className="mt-3 font-editorial text-[clamp(1.375rem,2vw,1.875rem)] font-[450] leading-[1.45] tracking-[-0.01em] text-ink">
+      <p className="mt-3 font-display text-[clamp(1.375rem,2vw,1.875rem)] font-[450] leading-[1.45] tracking-[-0.01em] uppercase text-ink">
         {beat.body}
       </p>
     </motion.div>
@@ -147,7 +147,7 @@ export function StorySection() {
           <div className="lg:col-span-6">
             <div className="lg:sticky lg:top-[120px]">
               <motion.div {...(reduce ? {} : imageMotion)}>
-                <div className="aspect-[4/3] overflow-hidden rounded-[10px] bg-coal-900 lg:aspect-[5/4]">
+                <div className="aspect-[4/3] overflow-hidden rounded-[20px] bg-coal-900 lg:aspect-[5/4]">
                   <img
                     src={atmosphereFlames.src}
                     alt={atmosphereFlames.alt}
