@@ -1,3 +1,5 @@
+import { Header } from './components/layout/Header'
+import { Footer } from './components/sections/Footer'
 import { GallerySection } from './components/sections/GallerySection'
 import { HeatSelector } from './components/sections/HeatSelector'
 import { Hero } from './components/sections/Hero'
@@ -8,15 +10,19 @@ import { VisitSection } from './components/sections/VisitSection'
 
 function App() {
   return (
-    <main>
-      <Hero />
-      <SignatureDishes />
-      <HeatSelector />
-      <StorySection />
-      <GallerySection />
-      <ReviewsSection />
-      <VisitSection />
-    </main>
+    <>
+      <Header />
+      <main>
+        <Hero />
+        <SignatureDishes />
+        <HeatSelector />
+        <StorySection />
+        <GallerySection />
+        <ReviewsSection />
+        <VisitSection />
+      </main>
+      <Footer />
+    </>
   )
 }
 

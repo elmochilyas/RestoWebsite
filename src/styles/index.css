@@ -46,6 +46,16 @@
 @custom-variant short (@media (max-height: 800px));
 
 @layer base {
+  :root {
+    --header-height: 68px;
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --header-height: 76px;
+    }
+  }
+
   html {
     scroll-behavior: smooth;
   }

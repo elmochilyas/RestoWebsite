@@ -146,7 +146,7 @@ export function ReviewsSection() {
 
           <motion.div
             {...(reduce ? {} : ratingMotion)}
-            aria-label={`Noté ${ratingLabel} sur 5 sur la base de ${reviewCount} avis Google`}
+            aria-label={`Rated ${ratingLabel} out of 5 based on ${reviewCount} Google reviews`}
             className="mt-8 lg:mt-0 lg:shrink-0"
           >
             <div className="flex items-baseline">
@@ -159,7 +159,7 @@ export function ReviewsSection() {
             </div>
             <Stars value={rating} className="mt-4" />
             <p className="mt-3 text-sm font-bold uppercase tracking-[0.14em] text-ink/70">
-              {reviewCount} avis Google
+              {reviewCount} Google reviews
             </p>
           </motion.div>
         </header>
@@ -190,7 +190,7 @@ export function ReviewsSection() {
           rel="noopener noreferrer"
           className="group mt-10 inline-flex items-center gap-2 border-b border-peri-red pb-1 text-base font-bold text-peri-red transition-colors hover:text-ember sm:mt-12 lg:mt-14"
         >
-          Voir les avis Google
+          See Google reviews
           <ArrowRight
             aria-hidden="true"
             className="size-5 transition-transform duration-200 group-hover:translate-x-1"

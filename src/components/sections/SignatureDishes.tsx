@@ -72,7 +72,10 @@ function DishCard({
 
 export function SignatureDishes() {
   return (
-    <section className="bg-cream py-20 text-ink sm:py-24 lg:py-32">
+    <section
+      id="menu"
+      className="scroll-mt-24 bg-cream py-20 text-ink sm:py-24 lg:py-32"
+    >
       <Container>
         <header className="mb-10 sm:mb-14 lg:mb-16 lg:flex lg:items-end lg:justify-between lg:gap-8">
           <div>
@@ -86,7 +89,7 @@ export function SignatureDishes() {
             href="#menu"
             className="group mt-6 inline-flex items-center gap-2 text-base font-bold text-ink underline-offset-4 hover:underline lg:mt-0"
           >
-            Voir le menu
+            View the menu
             <ArrowRight
               aria-hidden="true"
               className="size-5 transition-transform duration-200 group-hover:translate-x-1"

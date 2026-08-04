@@ -5,6 +5,7 @@ import { Button } from '../ui/Button'
 import { Container } from '../ui/Container'
 import { Eyebrow } from '../ui/Eyebrow'
 
+
 type HeadlineLine = {
   text: string
   accent?: boolean
@@ -40,7 +41,7 @@ export function Hero() {
   const reduce = useReducedMotion()
 
   return (
-    <section className="relative flex min-h-svh flex-col overflow-hidden bg-coal-950 text-cream">
+    <section id="hero" className="relative flex min-h-svh flex-col overflow-hidden bg-coal-950 text-cream">
       <motion.div
         className="absolute inset-0"
         initial={reduce ? false : { scale: 1.08, opacity: 0 }}
@@ -59,15 +60,7 @@ export function Hero() {
         className="absolute inset-0 bg-linear-to-t from-coal-950 via-coal-950/20 to-transparent"
       />
 
-      <header className="relative z-10">
-        <Container className="pt-6 sm:pt-8">
-          <p className="font-display text-lg uppercase tracking-tight text-cream sm:text-2xl">
-            Peri Peri Grill
-          </p>
-        </Container>
-      </header>
-
-      <div className="relative z-10 flex flex-1 flex-col justify-start lg:justify-end">
+      <div className="relative z-10 flex flex-1 flex-col justify-start pt-[calc(var(--header-height)+1.25rem)] short:pt-[calc(var(--header-height)+0.5rem)] lg:justify-end lg:pt-[calc(var(--header-height)+2rem)]">
         <Container className="pt-10 pb-12 sm:pt-14 sm:pb-14 lg:pb-16 short:pt-8 short:pb-14 short:lg:pb-24">
           <motion.div
             initial={reduce ? false : { opacity: 0 }}
@@ -123,7 +116,7 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.57, ease: 'easeOut' }}
           >
             <Button href="#menu" withArrow>
-              Voir le menu
+              View the menu
             </Button>
             <Button
               href={restaurant.links.maps}
@@ -132,7 +125,7 @@ export function Hero() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Itinéraire
+              Directions
             </Button>
           </motion.div>
         </Container>

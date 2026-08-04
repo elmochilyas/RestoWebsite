@@ -136,12 +136,12 @@ export function VisitSection() {
                   withArrow
                   className="w-full sm:w-auto"
                 >
-                  Itinéraire
+                  Directions
                 </Button>
 
                 <div className="mt-8 lg:mt-10">
                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-smoke">
-                    Téléphone
+                    Phone
                   </p>
                   <a
                     href={restaurant.phoneHref}
