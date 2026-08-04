@@ -31,13 +31,16 @@ export type MenuItem = {
 export type Review = {
   id: string
   quote: string
-  rating?: number
+  rating: number
+  reviewer: string
   source: 'Google' | 'Tripadvisor'
   dateLabel?: string
+  sourceUrl?: string
 }
 
 export type ReputationTheme = {
   id: string
+  label: string
   summary: string
 }
 
