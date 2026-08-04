@@ -4,6 +4,7 @@ import { Hero } from './components/sections/Hero'
 import { ReviewsSection } from './components/sections/ReviewsSection'
 import { SignatureDishes } from './components/sections/SignatureDishes'
 import { StorySection } from './components/sections/StorySection'
+import { VisitSection } from './components/sections/VisitSection'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <StorySection />
       <GallerySection />
       <ReviewsSection />
+      <VisitSection />
     </main>
   )
 }
