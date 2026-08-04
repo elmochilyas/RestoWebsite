@@ -60,7 +60,7 @@ const contactActions: ContactAction[] = [
   {
     icon: SiGooglemaps,
     label: 'GOOGLE MAPS',
-    action: 'Directions',
+    action: 'Find us',
     href: restaurant.links.maps,
     ariaLabel: 'Open Peri Peri Grill in Google Maps',
   },
@@ -94,19 +94,21 @@ export function Footer() {
     <footer className="border-t border-line-dark bg-coal-950 text-cream">
       <Container>
         <motion.div {...(reduce ? {} : fadeMotion)}>
-          <div className="grid gap-10 py-14 sm:gap-x-10 sm:py-16 lg:grid-cols-12 lg:gap-x-8 lg:py-18 xl:gap-x-12">
+          <div className="grid gap-7 py-10 sm:gap-x-10 sm:py-14 lg:grid-cols-12 lg:gap-x-8 lg:py-18 xl:gap-x-12">
             {/* ── Brand ── */}
-            <div className="self-start lg:col-span-4 lg:col-start-1">
-              <PeriPeriLogo className="h-auto w-[120px] sm:w-[140px] lg:w-[140px]" />
-              <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.16em] text-smoke">
-                {restaurant.locationName}
-              </p>
-              <a
-                href={restaurant.phoneHref}
-                className="mt-2 inline-block font-body text-lg font-semibold text-cream transition-colors duration-200 hover:text-ember lg:text-xl"
-              >
-                {restaurant.phoneDisplay}
-              </a>
+            <div className="flex items-center gap-4 self-start sm:flex-col sm:items-start sm:gap-0 lg:col-span-4 lg:col-start-1">
+              <PeriPeriLogo className="h-auto w-[92px] sm:w-[120px] lg:w-[140px]" />
+              <div className="sm:mt-3">
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-smoke">
+                  {restaurant.locationName}
+                </p>
+                <a
+                  href={restaurant.phoneHref}
+                  className="mt-1 inline-block font-body text-[15px] font-semibold text-cream transition-colors duration-200 hover:text-ember sm:text-lg lg:text-xl"
+                >
+                  {restaurant.phoneDisplay}
+                </a>
+              </div>
             </div>
 
             {/* ── Explore ── */}
@@ -114,15 +116,15 @@ export function Footer() {
               aria-label="Footer navigation"
               className="self-start lg:col-span-2 lg:col-start-7 lg:row-start-1"
             >
-              <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.14em] text-smoke">
+              <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.14em] text-smoke sm:mb-4">
                 Explore
               </p>
-              <ul className="flex flex-col gap-[10px]">
+              <ul className="grid grid-cols-2 gap-x-4 gap-y-1 sm:flex sm:flex-col sm:gap-y-[10px]">
                 {navLinks.map((link) => (
                   <li key={link.href}>
                     <a
                       href={link.href}
-                      className={`relative inline-flex min-h-11 items-center text-[13px] font-bold uppercase tracking-[0.14em] text-smoke transition-colors duration-200 lg:min-h-0 lg:text-sm ${linkClass}`}
+                      className={`relative inline-flex min-h-[38px] items-center text-[13px] font-bold uppercase tracking-[0.14em] text-smoke transition-colors duration-200 lg:min-h-0 lg:text-sm ${linkClass}`}
                     >
                       {link.label}
                     </a>
@@ -137,7 +139,7 @@ export function Footer() {
                 Connect
               </p>
               <motion.div
-                className="grid grid-cols-2 gap-3"
+                className="grid grid-cols-2 gap-2.5 sm:gap-3"
                 {...(reduce ? {} : { variants: cardStagger, initial: 'hidden', whileInView: 'visible', viewport: VIEWPORT })}
               >
                 {contactActions.map((item) => (
@@ -148,7 +150,7 @@ export function Footer() {
                     rel="noopener noreferrer"
                     aria-label={item.ariaLabel}
                     {...(reduce ? {} : cardItem)}
-                    className="group flex items-center gap-3 rounded-[14px] border border-line-dark bg-coal-900 p-4 transition-[border-color,background] duration-200 hover:border-cream/30 hover:bg-coal-900/80"
+                    className="group flex items-center gap-3 rounded-[14px] border border-line-dark bg-coal-900 p-3 transition-[border-color,background] duration-200 hover:border-cream/30 hover:bg-coal-900/80 sm:p-4"
                   >
                     <span className={`flex shrink-0 items-center justify-center ${item.iconClassName ?? 'text-cream'}`}>
                       <item.icon className="size-[18px] transition-transform duration-200 group-hover:scale-105" />
@@ -172,7 +174,7 @@ export function Footer() {
           </div>
 
           {/* ── Bottom meta ── */}
-          <div className="flex flex-col gap-1 border-t border-line-dark py-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-1 border-t border-line-dark py-4 sm:flex-row sm:items-center sm:justify-between sm:py-5">
             <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-smoke">
               © {year} {restaurant.name}
             </p>

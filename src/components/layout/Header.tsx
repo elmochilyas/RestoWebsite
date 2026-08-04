@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { Menu, X } from 'lucide-react'
+import { MapPin, Menu, X } from 'lucide-react'
 import { navLinks } from '../../content/navigation'
 import { restaurant } from '../../content'
 import PeriPeriLogo from '../ui/PeriPeriLogo'
@@ -120,7 +120,7 @@ export function Header() {
       ([entry]) => {
         setIsFooterVisible(entry.isIntersecting)
       },
-      { rootMargin: '-56px 0px 0px 0px' },
+      { rootMargin: '0px 0px 80px 0px' },
     )
 
     observer.observe(footerRef.current)
@@ -296,7 +296,8 @@ export function Header() {
                 rel="noopener noreferrer"
                 className="hidden items-center gap-2 rounded-xl border border-line-dark px-5 py-2.5 text-[0.8125rem] font-bold uppercase tracking-wide text-cream transition-colors duration-200 hover:border-cream/40 hover:bg-cream/10 lg:inline-flex"
               >
-                Directions
+                <MapPin className="size-4" aria-hidden="true" />
+                Find us
               </a>
 
               {/* Mobile menu trigger */}
@@ -370,22 +371,23 @@ export function Header() {
             <div className="border-t border-line-dark px-6 pb-10 pt-6">
               <div className="flex flex-col gap-3">
                 <a
-                  href={restaurant.links.maps}
+                  href={restaurant.links.glovo}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleNavClick}
                   className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-peri-red px-6 text-base font-bold uppercase tracking-wide text-cream transition-colors duration-200 hover:bg-ember"
                 >
-                  Directions
+                  Order on Glovo
                 </a>
                 <a
-                  href={restaurant.links.instagram}
+                  href={restaurant.links.maps}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleNavClick}
                   className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-line-dark px-6 text-base font-bold uppercase tracking-wide text-cream transition-colors duration-200 hover:border-cream/40 hover:bg-cream/10"
                 >
-                  Instagram
+                  <MapPin className="size-4" aria-hidden="true" />
+                  Find us
                 </a>
               </div>
             </div>
@@ -405,18 +407,21 @@ export function Header() {
           >
             <div className="flex gap-3">
               <a
-                href="#menu"
-                className="flex min-h-[48px] flex-1 items-center justify-center rounded-xl bg-peri-red px-4 text-[0.875rem] font-bold uppercase tracking-wide text-cream transition-colors duration-200 hover:bg-ember"
+                href={restaurant.links.glovo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl bg-peri-red px-4 text-[0.875rem] font-bold uppercase tracking-wide text-cream transition-colors duration-200 hover:bg-ember"
               >
-                View the menu
+                Order now
               </a>
               <a
                 href={restaurant.links.maps}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex min-h-[48px] flex-1 items-center justify-center rounded-xl border border-line-dark px-4 text-[0.875rem] font-bold uppercase tracking-wide text-cream transition-colors duration-200 hover:border-cream/40 hover:bg-cream/10"
+                className="flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl border border-line-dark px-4 text-[0.875rem] font-bold uppercase tracking-wide text-cream transition-colors duration-200 hover:border-cream/40 hover:bg-cream/10"
               >
-                Directions
+                <MapPin className="size-4" aria-hidden="true" />
+                Find us
               </a>
             </div>
           </motion.div>

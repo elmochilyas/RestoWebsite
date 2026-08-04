@@ -1,3 +1,4 @@
+import { MapPin } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { restaurant } from '../../content'
 import { heroMedia } from '../../content/media'
@@ -60,8 +61,8 @@ export function Hero() {
         className="absolute inset-0 bg-linear-to-t from-coal-950 via-coal-950/20 to-transparent"
       />
 
-      <div className="relative z-10 flex flex-1 flex-col justify-start pt-[calc(var(--header-height)+1.25rem)] short:pt-[calc(var(--header-height)+0.5rem)] lg:justify-end lg:pt-[calc(var(--header-height)+2rem)]">
-        <Container className="pt-10 pb-12 sm:pt-14 sm:pb-14 lg:pb-16 short:pt-8 short:pb-14 short:lg:pb-24">
+      <div className="relative z-10 flex flex-1 flex-col justify-center pt-[calc(var(--header-height)+1.25rem)] short:pt-[calc(var(--header-height)+0.5rem)] lg:justify-end lg:pt-[calc(var(--header-height)+2rem)]">
+        <Container className="pt-4 pb-24 sm:pt-6 sm:pb-28 lg:pb-16 short:pt-2 short:pb-16 short:lg:pb-24">
           <motion.div
             initial={reduce ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -70,7 +71,7 @@ export function Hero() {
             <Eyebrow>Agadir bay</Eyebrow>
           </motion.div>
 
-          <h1 className="mt-5 font-display text-hero uppercase text-cream sm:mt-8 short:mt-4 short:sm:mt-6">
+          <h1 className="mt-12 font-display text-hero uppercase text-cream sm:mt-12 short:mt-8 short:sm:mt-10">
             {headlineLines.map((line, index) => (
               <span
                 key={line.text}
@@ -94,14 +95,14 @@ export function Hero() {
 
           <motion.div
             aria-hidden="true"
-            className="mt-7 h-1 w-24 origin-left bg-linear-to-r from-peri-red via-ember to-mustard sm:mt-9 short:mt-5 short:sm:mt-6"
+            className="mt-12 h-1 w-24 origin-left bg-linear-to-r from-peri-red via-ember to-mustard sm:mt-12 short:mt-8 short:sm:mt-9"
             initial={reduce ? false : { scaleX: 0, opacity: 0 }}
             animate={{ scaleX: 1, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.42, ease: 'easeOut' }}
           />
 
           <motion.p
-            className="mt-6 max-w-md text-body text-smoke sm:mt-8 short:mt-4 short:sm:mt-6"
+            className="mt-10 max-w-md text-body text-smoke sm:mt-10 short:mt-6 short:sm:mt-8"
             initial={reduce ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5, ease: 'easeOut' }}
@@ -110,13 +111,19 @@ export function Hero() {
           </motion.p>
 
           <motion.div
-            className="mt-8 flex flex-wrap gap-3.5 sm:mt-10 sm:gap-4 short:mt-5 short:sm:mt-7"
+            className="mt-12 flex flex-wrap gap-3.5 sm:mt-12 sm:gap-4 short:mt-8 short:sm:mt-10"
             initial={reduce ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.57, ease: 'easeOut' }}
           >
-            <Button href="#menu" withArrow>
-              View the menu
+            <Button
+              href={restaurant.links.glovo}
+              withArrow
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Order Peri Peri Grill on Glovo"
+            >
+              Order on Glovo
             </Button>
             <Button
               href={restaurant.links.maps}
@@ -124,8 +131,10 @@ export function Hero() {
               className="bg-coal-950/50 lg:bg-transparent"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Find Peri Peri Grill on Google Maps"
             >
-              Directions
+              <MapPin className="size-4" aria-hidden="true" />
+              Find us
             </Button>
           </motion.div>
         </Container>
