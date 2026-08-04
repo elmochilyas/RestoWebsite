@@ -19,7 +19,8 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [activeSection, setActiveSection] = useState<string>('')
-  const [showStickyBar, setShowStickyBar] = useState(false)
+  const [isHeroVisible, setIsHeroVisible] = useState(true)
+  const [isFooterVisible, setIsFooterVisible] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
   const menuTriggerRef = useRef<HTMLButtonElement>(null)
@@ -91,7 +92,7 @@ export function Header() {
   }, [])
 
   // ---------------------------------------------------------------------------
-  // Hero observation (sticky bar visibility)
+  // Hero observation (isHeroVisible)
   // ---------------------------------------------------------------------------
   useEffect(() => {
     heroRef.current = document.getElementById('hero')
@@ -99,7 +100,7 @@ export function Header() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setShowStickyBar(!entry.isIntersecting)
+        setIsHeroVisible(entry.isIntersecting)
       },
       { threshold: 0.2 },
     )
@@ -109,7 +110,7 @@ export function Header() {
   }, [])
 
   // ---------------------------------------------------------------------------
-  // Footer observation (hide sticky bar before overlap)
+  // Footer observation (isFooterVisible)
   // ---------------------------------------------------------------------------
   useEffect(() => {
     footerRef.current = document.querySelector('footer')
@@ -117,7 +118,7 @@ export function Header() {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) setShowStickyBar(false)
+        setIsFooterVisible(entry.isIntersecting)
       },
       { rootMargin: '-56px 0px 0px 0px' },
     )
@@ -229,6 +230,8 @@ export function Header() {
   // ---------------------------------------------------------------------------
   // Render
   // ---------------------------------------------------------------------------
+  const shouldShowStickyBar = isMobile && !isHeroVisible && !isFooterVisible && !mobileOpen
+
   return (
     <>
       <header
@@ -334,7 +337,7 @@ export function Header() {
           >
             {/* Navigation items */}
             <nav
-              aria-label="Mobile navigation"
+              aria-label="Mobile navigation links"
               className="flex flex-1 flex-col justify-center px-6 py-10"
             >
               <div className="space-y-1">
@@ -392,7 +395,7 @@ export function Header() {
 
       {/* Mobile sticky bottom action bar */}
       <AnimatePresence>
-        {isMobile && showStickyBar && !mobileOpen && (
+        {shouldShowStickyBar && (
           <motion.div
             initial={reduce ? { opacity: 1 } : { opacity: 0, y: 12 }}
             animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}

@@ -7,12 +7,14 @@ import { ReviewsSection } from './components/sections/ReviewsSection'
 import { SignatureDishes } from './components/sections/SignatureDishes'
 import { StorySection } from './components/sections/StorySection'
 import { VisitSection } from './components/sections/VisitSection'
+import { SkipLink } from './components/ui/SkipLink'
 
 function App() {
   return (
     <>
+      <SkipLink />
       <Header />
-      <main>
+      <main id="main-content">
         <Hero />
         <SignatureDishes />
         <HeatSelector />

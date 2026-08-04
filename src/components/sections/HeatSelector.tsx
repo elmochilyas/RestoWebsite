@@ -269,7 +269,7 @@ function HeatStack({
               }}
               type="button"
               role="radio"
-              aria-label={`${level.label}, ${index + 1} sur ${heatLevels.length}`}
+              aria-label={`${level.label}, ${index + 1} of ${heatLevels.length}`}
               aria-checked={active}
               tabIndex={active ? 0 : -1}
               data-active={active}
