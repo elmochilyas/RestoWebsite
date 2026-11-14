@@ -14,14 +14,14 @@
     "media:optimize": "node scripts/optimize-media.mjs"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/react": "^4.2.1",
-    "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/check": "^0.9.12",
+    "@astrojs/react": "^7.1.9",
+    "@astrojs/sitemap": "^3.7.5",
     "@fontsource-variable/manrope": "^5.3.0",
     "@fontsource-variable/newsreader": "^5.3.0",
     "@fontsource/archivo-black": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
-    "astro": "^5.4.2",
+    "astro": "^7.4.12",
     "lucide-react": "^1.28.0",
     "motion": "^12.43.0",
     "react": "^19.2.8",
@@ -39,5 +39,9 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "sharp": true
   }
 }
