@@ -12,7 +12,7 @@ export const storyContent = {
   titleLines: [
     { text: 'The fire behind' },
     { text: 'The flavour.', accent: true },
-  ],
+  ] as { text: string; accent?: boolean }[],
   beats: [
     {
       id: 'roots',

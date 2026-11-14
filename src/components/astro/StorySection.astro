@@ -1,0 +1,72 @@
+---
+import { storyContent } from '../../content';
+import { atmosphereFlames } from '../../content/media';
+import Container from '../ui/Container.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+
+function statementLines(text: string): [string, string] {
+  const words = text.split(' ');
+  const split = Math.ceil(words.length / 2);
+  return [words.slice(0, split).join(' '), words.slice(split).join(' ')];
+}
+
+const [statementLineA, statementLineB] = statementLines(storyContent.statement);
+---
+
+<section
+  id="story"
+  class="scroll-mt-24 bg-paper py-20 text-ink sm:py-24 lg:py-32"
+>
+  <Container>
+    <header class="lg:max-w-[70%]">
+      <Eyebrow tone="light">{storyContent.eyebrow}</Eyebrow>
+
+      <h2 class="mt-5 font-display text-[clamp(2.125rem,5.5vw,4.75rem)] leading-[0.95] tracking-[-0.02em] uppercase text-ink sm:mt-6">
+        {storyContent.titleLines.map((line: { text: string; accent?: boolean }) => (
+          <span class={`block ${'accent' in line && line.accent ? 'text-peri-red' : ''}`}>
+            {line.text}
+          </span>
+        ))}
+      </h2>
+    </header>
+
+    <div class="mt-10 sm:mt-14 lg:mt-14 lg:grid lg:grid-cols-12 lg:gap-x-8">
+      <div class="lg:col-span-6">
+        <div class="lg:sticky lg:top-[120px]">
+          <div class="aspect-[4/3] overflow-hidden rounded-[20px] bg-coal-900 lg:aspect-[5/4]">
+            <img
+              src={atmosphereFlames.src}
+              alt={atmosphereFlames.alt}
+              loading="lazy"
+              decoding="async"
+              class="h-full w-full object-cover object-[55%_center]"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-10 space-y-14 sm:mt-14 sm:space-y-16 lg:col-span-6 lg:col-start-7 lg:mt-0 lg:space-y-20">
+        {storyContent.beats.map((beat, index) => (
+          <div>
+            <div class="flex items-baseline gap-3">
+              <span class="text-[1rem] font-bold tracking-[0.16em] text-peri-red">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <h3 class="font-display text-[1.125rem] uppercase tracking-[0.14em] text-ink sm:text-[1.25rem]">
+                {beat.title}
+              </h3>
+            </div>
+            <p class="mt-3 font-display text-[clamp(1.375rem,2vw,1.875rem)] font-[450] leading-[1.45] tracking-[-0.01em] uppercase text-ink">
+              {beat.body}
+            </p>
+          </div>
+        ))}
+
+        <p class="mt-12 border-t border-line-light pt-8 font-display text-[clamp(1.5rem,2.2vw,2.5rem)] leading-[0.95] tracking-[-0.02em] uppercase text-ink">
+          {statementLineA}
+          <span class="block">{statementLineB}</span>
+        </p>
+      </div>
+    </div>
+  </Container>
+</section>

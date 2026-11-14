@@ -1,0 +1,76 @@
+---
+import { restaurant } from '../../content/restaurant';
+
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://periperigrill.ma';
+
+const dayMap: Record<string, string> = {
+  monday: 'Monday',
+  tuesday: 'Tuesday',
+  wednesday: 'Wednesday',
+  thursday: 'Thursday',
+  friday: 'Friday',
+  saturday: 'Saturday',
+  sunday: 'Sunday',
+};
+
+const openingHoursSpecification = restaurant.publicInfo.hours.map((schedule) => ({
+  '@type': 'OpeningHoursSpecification',
+  dayOfWeek: dayMap[schedule.day] || schedule.day,
+  opens: schedule.open,
+  closes: schedule.close,
+}));
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'FastFoodRestaurant',
+  '@id': `${siteUrl}/#restaurant`,
+  name: `${restaurant.name} - ${restaurant.locationName}`,
+  alternateName: restaurant.name,
+  description: `${restaurant.tagline} Peri-peri flame-grilled chicken, wraps, wings, and platters in ${restaurant.locationName}, ${restaurant.city}.`,
+  url: siteUrl,
+  telephone: restaurant.phoneDisplay,
+  priceRange: `${restaurant.publicInfo.priceRange.min}-${restaurant.publicInfo.priceRange.max} ${restaurant.publicInfo.priceRange.currency}`,
+  servesCuisine: ['Peri-Peri', 'Flame-Grilled Chicken', 'Halal', 'Burgers', 'Wings'],
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Office Centre',
+    addressLocality: restaurant.city,
+    addressRegion: 'Souss-Massa',
+    postalCode: '80000',
+    addressCountry: 'MA',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 30.4035,
+    longitude: -9.5818,
+  },
+  openingHoursSpecification,
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: restaurant.publicInfo.rating.toString(),
+    reviewCount: restaurant.publicInfo.reviewCount.toString(),
+    bestRating: '5',
+    worstRating: '1',
+  },
+  hasMenu: `${siteUrl}/#menu`,
+  sameAs: [
+    restaurant.links.instagram,
+    restaurant.links.maps,
+    restaurant.links.glovo,
+  ],
+  potentialAction: {
+    '@type': 'OrderAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: restaurant.links.glovo,
+      actionPlatform: [
+        'http://schema.org/DesktopWebPlatform',
+        'http://schema.org/MobileWebPlatform',
+      ],
+    },
+    deliveryMethod: 'http://purl.org/goodrelations/v1#DeliveryModeDirectDownload',
+  },
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

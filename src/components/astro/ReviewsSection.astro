@@ -1,0 +1,143 @@
+---
+import { ArrowRight, Star } from 'lucide-react';
+import { restaurant, reviews, reviewsSection } from '../../content';
+import type { Review } from '../../types/content';
+import Container from '../ui/Container.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+
+const { rating, reviewCount } = restaurant.publicInfo;
+const ratingLabel = rating.toLocaleString('fr-FR');
+const featured = reviews[0];
+const supporting = reviews.slice(1);
+
+const SOURCE_META: Record<Review['source'], string> = {
+  Google: 'Google',
+  Tripadvisor: 'Tripadvisor',
+};
+
+const ratingPercent = Math.min(100, (rating / 5) * 100);
+---
+
+<section
+  id="reviews"
+  class="scroll-mt-24 bg-cream py-20 text-ink sm:py-24 lg:py-32"
+>
+  <Container>
+    <header class="lg:flex lg:items-end lg:justify-between lg:gap-8">
+      <div>
+        <Eyebrow tone="light">{reviewsSection.eyebrow}</Eyebrow>
+        <h2 class="mt-4 font-display text-h2 uppercase text-ink sm:mt-6">
+          {reviewsSection.titleLines.map((line) => (
+            <span class={`block ${line.accent ? 'text-peri-red' : ''}`}>
+              {line.text}
+            </span>
+          ))}
+        </h2>
+      </div>
+
+      <div
+        aria-label={`Rated ${ratingLabel} out of 5 based on ${reviewCount} Google reviews`}
+        class="mt-8 lg:mt-0 lg:shrink-0"
+      >
+        <div class="flex items-baseline">
+          <span class="font-display text-[clamp(3.75rem,16vw,4.5rem)] leading-none tracking-[-0.02em] text-ink lg:text-[clamp(4.5rem,8vw,6.75rem)]">
+            {ratingLabel}
+          </span>
+          <span class="ml-3 font-body text-lg font-bold text-ink/60 sm:text-xl">
+            / 5
+          </span>
+        </div>
+
+        <!-- Fractional Star Bar -->
+        <div aria-hidden="true" class="relative mt-4 inline-flex">
+          <div class="flex gap-1 text-line-light">
+            {Array.from({ length: 5 }, () => (
+              <Star className="size-4" />
+            ))}
+          </div>
+          <div
+            class="absolute inset-y-0 left-0 flex gap-1 overflow-hidden"
+            style={`width: ${ratingPercent}%`}
+          >
+            {Array.from({ length: 5 }, () => (
+              <Star className="size-4 shrink-0 fill-current text-mustard" />
+            ))}
+          </div>
+        </div>
+
+        <p class="mt-3 text-sm font-bold uppercase tracking-[0.14em] text-ink/70">
+          {reviewCount} Google reviews
+        </p>
+      </div>
+    </header>
+
+    <div class="mt-10 sm:mt-14 lg:mt-16 lg:grid lg:grid-cols-12 lg:gap-x-8">
+      <!-- Featured Review Card -->
+      <div class="lg:col-span-7">
+        {featured && (
+          <blockquote class="flex h-full flex-col justify-between rounded-[16px] bg-coal-950 p-8 text-cream sm:p-10 lg:p-12">
+            <div>
+              <div aria-hidden="true" class="mb-5 flex gap-1 sm:mb-6">
+                {Array.from({ length: 5 }, () => (
+                  <Star className="size-4 fill-current text-mustard" />
+                ))}
+              </div>
+              <p class="font-editorial text-[clamp(1.5rem,2.4vw,2.5rem)] font-[450] leading-[1.3] tracking-[-0.01em]">
+                &ldquo;{featured.quote}&rdquo;
+              </p>
+            </div>
+            <footer class="mt-6 text-cream/70 sm:mt-8">
+              <div class="text-[0.9375rem] font-bold uppercase tracking-[0.14em]">
+                {featured.reviewer}
+              </div>
+              <div class="mt-1 text-[0.75rem] font-bold uppercase tracking-[0.16em]">
+                {SOURCE_META[featured.source]}
+                {featured.dateLabel ? ` · ${featured.dateLabel}` : ''}
+              </div>
+            </footer>
+          </blockquote>
+        )}
+      </div>
+
+      <!-- Supporting Review Cards -->
+      <div class="mt-4 sm:mt-6 md:grid md:grid-cols-2 md:gap-4 lg:col-span-5 lg:col-start-8 lg:mt-0 lg:grid-cols-1 lg:gap-y-6">
+        {supporting.map((review) => (
+          <blockquote class="flex h-full flex-col justify-between rounded-[14px] border border-line-light bg-paper p-6 text-ink sm:p-7">
+            <div>
+              <div aria-hidden="true" class="mb-4 flex gap-1">
+                {Array.from({ length: 5 }, () => (
+                  <Star className="size-4 fill-current text-mustard" />
+                ))}
+              </div>
+              <p class="font-editorial text-[clamp(1.1875rem,1.4vw,1.5625rem)] font-[450] leading-[1.45] tracking-[-0.01em]">
+                &ldquo;{review.quote}&rdquo;
+              </p>
+            </div>
+            <footer class="mt-6 text-ink/60 sm:mt-8">
+              <div class="text-[0.9375rem] font-bold uppercase tracking-[0.14em]">
+                {review.reviewer}
+              </div>
+              <div class="mt-1 text-[0.75rem] font-bold uppercase tracking-[0.16em]">
+                {SOURCE_META[review.source]}
+                {review.dateLabel ? ` · ${review.dateLabel}` : ''}
+              </div>
+            </footer>
+          </blockquote>
+        ))}
+      </div>
+    </div>
+
+    <a
+      href={restaurant.links.maps}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="group mt-10 inline-flex items-center gap-2 border-b border-peri-red pb-1 text-base font-bold text-peri-red transition-colors hover:text-ember sm:mt-12 lg:mt-14"
+    >
+      See Google reviews
+      <ArrowRight
+        aria-hidden="true"
+        className="size-5 transition-transform duration-200 group-hover:translate-x-1"
+      />
+    </a>
+  </Container>
+</section>

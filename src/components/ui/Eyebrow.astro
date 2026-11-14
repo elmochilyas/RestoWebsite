@@ -1,0 +1,19 @@
+---
+interface Props {
+  tone?: 'dark' | 'light';
+  class?: string;
+  className?: string;
+  [key: string]: any;
+}
+
+const { tone = 'dark', class: classNameProp, className, ...rest } = Astro.props;
+const classes = classNameProp || className || '';
+---
+
+<p
+  class={`flex items-center gap-2.5 text-eyebrow uppercase ${tone === 'dark' ? 'text-smoke' : 'text-ink'} ${classes}`}
+  {...rest}
+>
+  <span aria-hidden="true" class="h-0.5 w-6 shrink-0 bg-peri-red" />
+  <slot />
+</p>
