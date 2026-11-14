@@ -1,0 +1,29 @@
+---
+import '@fontsource-variable/manrope';
+import '@fontsource-variable/newsreader';
+import '@fontsource/archivo-black';
+import '../styles/index.css';
+import BaseHead from '../components/seo/BaseHead.astro';
+import RestaurantSchema from '../components/seo/RestaurantSchema.astro';
+import SkipLink from '../components/ui/SkipLink.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const { title, description, image } = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <BaseHead title={title} description={description} image={image} />
+    <RestaurantSchema />
+  </head>
+  <body class="bg-coal-950 font-body text-cream antialiased selection:bg-peri-red selection:text-cream">
+    <SkipLink />
+    <slot />
+  </body>
+</html>

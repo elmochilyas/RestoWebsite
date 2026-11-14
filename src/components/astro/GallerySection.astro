@@ -1,0 +1,84 @@
+---
+import { gallery, gallerySection } from '../../content';
+import type { GalleryItem } from '../../types/content';
+import Container from '../ui/Container.astro';
+import Eyebrow from '../ui/Eyebrow.astro';
+
+type GalleryLayoutRole = NonNullable<GalleryItem['layoutRole']>;
+
+const ROLE_LAYOUT: Record<
+  GalleryLayoutRole,
+  { base: string; md: string; lg: string }
+> = {
+  anchor: {
+    base: 'col-span-2 aspect-[4/3]',
+    md: 'md:col-span-4 md:order-1',
+    lg: 'lg:col-span-7 lg:aspect-[16/9] lg:order-1',
+  },
+  portrait: {
+    base: 'aspect-[3/4]',
+    md: 'md:col-span-2 md:order-2',
+    lg: 'lg:col-span-5 lg:aspect-[6/5] lg:order-2',
+  },
+  action: {
+    base: 'aspect-[3/4]',
+    md: 'md:col-span-3 md:order-4',
+    lg: 'lg:col-span-4 lg:aspect-[5/6] lg:order-3',
+  },
+  wide: {
+    base: 'col-span-2 aspect-[4/3]',
+    md: 'md:col-span-6 md:aspect-[16/10] md:order-3',
+    lg: 'lg:col-span-8 lg:aspect-[16/9] lg:order-4',
+  },
+  detail: {
+    base: 'aspect-square',
+    md: 'md:col-span-3 md:order-5',
+    lg: 'lg:col-span-5 lg:aspect-[4/3] lg:order-5',
+  },
+  support: {
+    base: 'aspect-square',
+    md: 'md:col-span-6 md:order-6',
+    lg: 'lg:col-span-7 lg:aspect-[16/10] lg:order-6',
+  },
+};
+---
+
+<section
+  id="gallery"
+  class="scroll-mt-24 bg-coal-950 py-20 text-cream sm:py-24 lg:py-32"
+>
+  <Container>
+    <header>
+      <Eyebrow>{gallerySection.eyebrow}</Eyebrow>
+      <h2 class="mt-4 font-display text-h2 uppercase text-cream sm:mt-6">
+        {gallerySection.titleLines.map((line) => (
+          <span class={`block ${line.accent ? 'text-peri-red' : ''}`}>
+            {line.text}
+          </span>
+        ))}
+      </h2>
+    </header>
+
+    <div class="mt-9 grid grid-cols-2 gap-2.5 sm:mt-12 md:grid-cols-6 md:gap-4 lg:mt-14 lg:grid-cols-12 lg:gap-6">
+      {gallery.map((item) => {
+        const layout = ROLE_LAYOUT[item.layoutRole ?? 'support'];
+        return (
+          <div class={`${layout.base} ${layout.md} ${layout.lg}`}>
+            <div class="group h-full w-full overflow-hidden rounded-[20px] bg-coal-900">
+              <div class="h-full w-full" style={item.zoom ? `transform: scale(${item.zoom})` : undefined}>
+                <img
+                  src={item.image}
+                  alt={item.alt}
+                  loading="lazy"
+                  decoding="async"
+                  class="h-full w-full object-cover transition-transform duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] pointer-fine:group-hover:scale-[1.02]"
+                  style={item.objectPosition ? `object-position: ${item.objectPosition}` : undefined}
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </Container>
+</section>

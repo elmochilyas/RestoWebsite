@@ -1,0 +1,53 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://periperigrill.ma');
+
+const {
+  title = 'Peri Peri Grill — Agadir Bay | Flame-Grilled Chicken',
+  description = 'Peri Peri Grill in Agadir Bay — fresh flame-grilled chicken, peri-peri flavour, signature platters, wings, wraps and your choice of heat. Open late until 02:00.',
+  image = '/og-image.jpg',
+} = Astro.props;
+
+const socialImageURL = new URL(image, Astro.site || 'https://periperigrill.ma');
+---
+
+<!-- Global Metadata -->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="generator" content={Astro.generator} />
+<meta name="theme-color" content="#120d0a" />
+
+<!-- Canonical URL -->
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+<meta
+  name="keywords"
+  content="Peri Peri Grill, Agadir Bay, restaurant Agadir, poulet braisé Agadir, grilled chicken Agadir, Halal food Agadir, Office Centre Agadir, Glovo Peri Peri Agadir"
+/>
+
+<!-- Open Graph / Facebook / WhatsApp -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={Astro.url} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={socialImageURL} />
+<meta property="og:site_name" content="Peri Peri Grill Agadir Bay" />
+<meta property="og:locale" content="fr_FR" />
+<meta property="og:locale:alternate" content="en_US" />
+
+<!-- Twitter / X -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={Astro.url} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={socialImageURL} />

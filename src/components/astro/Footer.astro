@@ -1,0 +1,160 @@
+---
+import { ArrowUpRight } from 'lucide-react';
+import { SiInstagram, SiGlovo, SiGooglemaps } from 'react-icons/si';
+import { restaurant } from '../../content';
+import { navLinks } from '../../content/navigation';
+import Container from '../ui/Container.astro';
+import PeriPeriLogo from '../ui/PeriPeriLogo.astro';
+
+const year = new Date().getFullYear();
+
+const linkClass =
+  'after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-peri-red after:transition-[width] after:duration-200 hover:text-cream hover:after:w-full';
+
+type ContactAction = {
+  icon?: any;
+  isWhatsApp?: boolean;
+  label: string;
+  action: string;
+  href: string;
+  ariaLabel: string;
+  iconClassName?: string;
+};
+
+const contactActions: ContactAction[] = [
+  {
+    icon: SiInstagram,
+    label: 'INSTAGRAM',
+    action: 'Follow us',
+    href: restaurant.links.instagram,
+    ariaLabel: 'Open Peri Peri Grill on Instagram',
+  },
+  {
+    icon: SiGlovo,
+    label: 'GLOVO',
+    action: 'Order',
+    href: restaurant.links.glovo,
+    ariaLabel: 'Open Peri Peri Grill on Glovo',
+    iconClassName: 'text-[#00b140]',
+  },
+  {
+    icon: SiGooglemaps,
+    label: 'GOOGLE MAPS',
+    action: 'Find us',
+    href: restaurant.links.maps,
+    ariaLabel: 'Open Peri Peri Grill in Google Maps',
+  },
+];
+
+if (restaurant.links.whatsapp) {
+  contactActions.splice(1, 0, {
+    isWhatsApp: true,
+    label: 'WHATSAPP',
+    action: 'Message us',
+    href: restaurant.links.whatsapp,
+    ariaLabel: 'Message Peri Peri Grill on WhatsApp',
+    iconClassName: 'text-[#25d366]',
+  });
+}
+---
+
+<footer class="border-t border-line-dark bg-coal-950 text-cream">
+  <Container>
+    <div>
+      <div class="grid gap-7 py-10 sm:gap-x-10 sm:py-14 lg:grid-cols-12 lg:gap-x-8 lg:py-18 xl:gap-x-12">
+        <!-- ── Brand ── -->
+        <div class="flex items-center gap-4 self-start sm:flex-col sm:items-start sm:gap-0 lg:col-span-4 lg:col-start-1">
+          <PeriPeriLogo class="h-auto w-[92px] sm:w-[120px] lg:w-[140px]" />
+          <div class="sm:mt-3">
+            <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-smoke">
+              {restaurant.locationName}
+            </p>
+            <a
+              href={restaurant.phoneHref}
+              class="mt-1 inline-block font-body text-[15px] font-semibold text-cream transition-colors duration-200 hover:text-ember sm:text-lg lg:text-xl"
+            >
+              {restaurant.phoneDisplay}
+            </a>
+          </div>
+        </div>
+
+        <!-- ── Explore ── -->
+        <nav
+          aria-label="Footer navigation"
+          class="self-start lg:col-span-2 lg:col-start-7 lg:row-start-1"
+        >
+          <p class="mb-3 text-[11px] font-bold uppercase tracking-[0.14em] text-smoke sm:mb-4">
+            Explore
+          </p>
+          <ul class="grid grid-cols-2 gap-x-4 gap-y-1 sm:flex sm:flex-col sm:gap-y-[10px]">
+            {navLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class={`relative inline-flex min-h-[38px] items-center text-[13px] font-bold uppercase tracking-[0.14em] text-smoke transition-colors duration-200 lg:min-h-0 lg:text-sm ${linkClass}`}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <!-- ── Connect ── -->
+        <div class="lg:col-span-5 lg:col-start-9 lg:row-start-1">
+          <p class="mb-4 text-[11px] font-bold uppercase tracking-[0.14em] text-smoke">
+            Connect
+          </p>
+          <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
+            {contactActions.map((item) => (
+              <a
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={item.ariaLabel}
+                class="group flex items-center gap-3 rounded-[14px] border border-line-dark bg-coal-900 p-3 transition-[border-color,background] duration-200 hover:border-cream/30 hover:bg-coal-900/80 sm:p-4"
+              >
+                <span class={`flex shrink-0 items-center justify-center ${item.iconClassName ?? 'text-cream'}`}>
+                  {item.isWhatsApp ? (
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      class="size-[18px]"
+                      aria-hidden="true"
+                    >
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                    </svg>
+                  ) : item.icon ? (
+                    <item.icon className="size-[18px] transition-transform duration-200 group-hover:scale-105" />
+                  ) : null}
+                </span>
+                <span class="min-w-0 flex-1">
+                  <span class="block text-[11px] font-bold uppercase tracking-[0.12em] text-cream">
+                    {item.label}
+                  </span>
+                  <span class="mt-0.5 flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-smoke transition-colors duration-200 group-hover:text-cream">
+                    {item.action}
+                    <ArrowUpRight
+                      aria-hidden="true"
+                      className="size-3 transition-transform duration-200 group-hover:-translate-y-px group-hover:translate-x-px"
+                    />
+                  </span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Bottom meta ── -->
+      <div class="flex flex-col gap-1 border-t border-line-dark py-4 sm:flex-row sm:items-center sm:justify-between sm:py-5">
+        <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-smoke">
+          © {year} {restaurant.name}
+        </p>
+        <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-smoke">
+          {restaurant.locationName} · Morocco
+        </p>
+      </div>
+    </div>
+  </Container>
+</footer>

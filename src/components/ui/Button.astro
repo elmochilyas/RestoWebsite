@@ -1,0 +1,55 @@
+---
+import { ArrowRight } from 'lucide-react';
+
+interface Props {
+  variant?: 'primary' | 'secondary' | 'inverse';
+  withArrow?: boolean;
+  href?: string;
+  class?: string;
+  className?: string;
+  target?: string;
+  rel?: string;
+  [key: string]: any;
+}
+
+const {
+  variant = 'primary',
+  withArrow = false,
+  href,
+  class: classNameProp,
+  className,
+  ...rest
+} = Astro.props;
+
+const variants = {
+  primary: 'bg-peri-red text-cream hover:bg-ember',
+  secondary: 'border border-line-dark text-cream hover:border-cream/40 hover:bg-cream/10',
+  inverse: 'border border-line-light text-ink hover:border-ink/50 hover:bg-ink/5',
+};
+
+const classes = `group inline-flex min-h-12 items-center justify-center gap-2.5 rounded-xl px-6 text-base font-bold tracking-wide transition-colors duration-200 sm:min-h-14 sm:px-7 ${variants[variant]} ${classNameProp || className || ''}`;
+---
+
+{
+  href ? (
+    <a href={href} class={classes} {...rest}>
+      <slot />
+      {withArrow && (
+        <ArrowRight
+          aria-hidden="true"
+          className="size-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1"
+        />
+      )}
+    </a>
+  ) : (
+    <button class={classes} {...rest}>
+      <slot />
+      {withArrow && (
+        <ArrowRight
+          aria-hidden="true"
+          className="size-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1"
+        />
+      )}
+    </button>
+  )
+}
