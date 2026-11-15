@@ -1,57 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { ArrowRight, Globe, MapPin, Menu, Phone, X } from 'lucide-react'
-import { SiGlovo, SiGooglemaps, SiInstagram } from 'react-icons/si'
-import { navLinks } from '../../content/navigation'
+import { ArrowRight, ArrowUpRight, MapPin, Menu, Phone, X } from 'lucide-react'
+import { SiGlovo, SiInstagram } from 'react-icons/si'
+import { defaultLocale, getNavigationItems, navLinks } from '../../content/navigation'
 import { restaurant } from '../../content'
-import PeriPeriLogo from '../ui/PeriPeriLogo'
 import { Container } from '../ui/Container'
+import { DesktopSegmentedLocaleSelector, LocaleSelector } from '../ui/LocaleStatus'
+import PeriPeriLogo from '../ui/PeriPeriLogo'
 
 const EASE_OUT: [number, number, number, number] = [0.22, 1, 0.36, 1]
-
-type Lang = 'fr' | 'en'
-
-const NAV_LABELS: Record<Lang, Record<string, string>> = {
-  fr: {
-    '#menu': 'MENU',
-    '#story': 'NOTRE HISTOIRE',
-    '#gallery': 'GALERIE',
-    '#reviews': 'AVIS',
-    '#visit': 'VISITE',
-  },
-  en: {
-    '#menu': 'MENU',
-    '#story': 'OUR STORY',
-    '#gallery': 'GALLERY',
-    '#reviews': 'REVIEWS',
-    '#visit': 'VISIT',
-  },
-}
-
-const UI_TEXT = {
-  fr: {
-    findUs: 'Nous trouver',
-    orderGlovo: 'Commander sur Glovo',
-    orderNow: 'Commander',
-    locationBadge: 'Agadir Bay · Ouvert jusqu’à 02h',
-    phoneAria: 'Appeler le restaurant',
-    whatsappAria: 'Discuter sur WhatsApp',
-    instaAria: 'Suivre sur Instagram',
-    mapsAria: 'Ouvrir dans Google Maps',
-    language: 'Langue',
-  },
-  en: {
-    findUs: 'Find us',
-    orderGlovo: 'Order on Glovo',
-    orderNow: 'Order now',
-    locationBadge: 'Agadir Bay · Open until 02:00',
-    phoneAria: 'Call the restaurant',
-    whatsappAria: 'Chat on WhatsApp',
-    instaAria: 'Follow on Instagram',
-    mapsAria: 'Open in Google Maps',
-    language: 'Language',
-  },
-}
+const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
 function WhatsAppIcon({ className = 'size-4' }: { className?: string }) {
   return (
@@ -61,281 +19,235 @@ function WhatsAppIcon({ className = 'size-4' }: { className?: string }) {
   )
 }
 
-export function Header() {
-  const reduce = useReducedMotion()
+type HeaderProps = { currentPath?: string }
 
+export function Header({ currentPath = '/' }: HeaderProps) {
+  const reduceMotion = useReducedMotion()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState<string>('')
+  const [activeSection, setActiveSection] = useState('')
   const [isHeroVisible, setIsHeroVisible] = useState(true)
   const [isFooterVisible, setIsFooterVisible] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
-  const [lang, setLang] = useState<Lang>('fr')
 
   const menuTriggerRef = useRef<HTMLButtonElement>(null)
-  const mobileMenuRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const mobileDialogRef = useRef<HTMLDivElement>(null)
 
-  const heroRef = useRef<Element | null>(null)
-  const footerRef = useRef<Element | null>(null)
-  const savedScrollRef = useRef(0)
-  const previousOverflowRef = useRef<string>('')
+  const navItems = useMemo(() => getNavigationItems(defaultLocale), [])
 
-  // ---------------------------------------------------------------------------
-  // Responsive breakpoint
-  // ---------------------------------------------------------------------------
+  // Responsive listener
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 1024px)')
-    const sync = () => setIsMobile(!mq.matches)
+    const sync = () => {
+      setIsMobile(!mq.matches)
+      if (mq.matches) setMobileOpen(false)
+    }
     sync()
     mq.addEventListener('change', sync)
-    return () => mq.removeEventListener('change', sync)
+    window.addEventListener('resize', sync, { passive: true })
+    return () => {
+      mq.removeEventListener('change', sync)
+      window.removeEventListener('resize', sync)
+    }
   }, [])
 
-  // Close mobile menu when crossing to desktop
+  // Scroll listener for condensing the floating pill and clearing section at top
   useEffect(() => {
-    if (!isMobile && mobileOpen) {
-      setMobileOpen(false)
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40)
+      if (window.scrollY < 120) {
+        setActiveSection('')
+      }
     }
-  }, [isMobile, mobileOpen])
-
-  // ---------------------------------------------------------------------------
-  // Scroll state
-  // ---------------------------------------------------------------------------
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 64)
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // ---------------------------------------------------------------------------
-  // Active section tracking (reading-band approach)
-  // ---------------------------------------------------------------------------
+  // Active section tracking via IntersectionObserver
   useEffect(() => {
-    const sections = navLinks
-      .map((link) => document.querySelector(link.href))
-      .filter((el): el is Element => el !== null)
+    if (currentPath !== '/') return
+    const heroEl = document.getElementById('hero')
+    const sectionEls = navLinks
+      .filter((link) => link.target.kind === 'section')
+      .map((link) => document.getElementById(link.target.sectionId))
+      .filter((el): el is HTMLElement => el !== null)
 
-    if (sections.length === 0) return
+    const targets = heroEl ? [heroEl, ...sectionEls] : sectionEls
+    if (targets.length === 0) return
 
     const observer = new IntersectionObserver(
       (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActiveSection(`#${entry.target.id}`)
-            return
-          }
+        const visible = entries.find((e) => e.isIntersecting)
+        if (visible) {
+          setActiveSection(visible.target.id === 'hero' ? '' : visible.target.id)
         }
       },
-      {
-        rootMargin: '-30% 0px -60% 0px',
-        threshold: 0,
-      },
+      { rootMargin: '-20% 0px -60% 0px', threshold: 0 },
     )
+    targets.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [currentPath])
 
-    for (const section of sections) {
-      observer.observe(section)
-    }
-
+  // Track Hero visibility to display bottom sticky bar
+  useEffect(() => {
+    const hero = document.getElementById('hero')
+    if (!hero) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsHeroVisible(entry.isIntersecting),
+      { threshold: 0.15 },
+    )
+    observer.observe(hero)
     return () => observer.disconnect()
   }, [])
 
-  // ---------------------------------------------------------------------------
-  // Hero observation (isHeroVisible)
-  // ---------------------------------------------------------------------------
+  // Track Footer visibility to dismiss sticky bar before collision
   useEffect(() => {
-    heroRef.current = document.getElementById('hero')
-    if (!heroRef.current) return
-
+    const footer = document.querySelector('footer')
+    if (!footer) return
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsHeroVisible(entry.isIntersecting)
-      },
-      { threshold: 0.2 },
-    )
-
-    observer.observe(heroRef.current)
-    return () => observer.disconnect()
-  }, [])
-
-  // ---------------------------------------------------------------------------
-  // Footer observation (isFooterVisible)
-  // ---------------------------------------------------------------------------
-  useEffect(() => {
-    footerRef.current = document.querySelector('footer')
-    if (!footerRef.current) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsFooterVisible(entry.isIntersecting)
-      },
+      ([entry]) => setIsFooterVisible(entry.isIntersecting),
       { rootMargin: '0px 0px 80px 0px' },
     )
-
-    observer.observe(footerRef.current)
+    observer.observe(footer)
     return () => observer.disconnect()
   }, [])
 
-  // ---------------------------------------------------------------------------
-  // Body scroll lock
-  // ---------------------------------------------------------------------------
-  const lockBody = useCallback(() => {
-    savedScrollRef.current = window.scrollY
-    previousOverflowRef.current = document.body.style.overflow
+  // Modal body scroll lock and a11y focus trap
+  useEffect(() => {
+    if (!mobileOpen) return
+
+    const prevHtmlOverflow = document.documentElement.style.overflow
+    const prevBodyOverflow = document.body.style.overflow
+    const backgroundElements = [
+      document.getElementById('main-content'),
+      document.querySelector('footer'),
+    ].filter((el): el is HTMLElement => el instanceof HTMLElement)
+
+    document.documentElement.style.overflow = 'hidden'
     document.body.style.overflow = 'hidden'
-    document.body.style.position = 'fixed'
-    document.body.style.top = `-${savedScrollRef.current}px`
-    document.body.style.width = '100%'
-  }, [])
+    backgroundElements.forEach((el) => {
+      el.inert = true
+      el.setAttribute('aria-hidden', 'true')
+    })
+    const focusFrame = window.requestAnimationFrame(() => closeButtonRef.current?.focus())
 
-  const unlockBody = useCallback(() => {
-    document.body.style.overflow = previousOverflowRef.current
-    document.body.style.position = ''
-    document.body.style.top = ''
-    document.body.style.width = ''
-    window.scrollTo(0, savedScrollRef.current)
-  }, [])
-
-  // Cleanup on unmount
-  useEffect(() => {
     return () => {
-      if (mobileOpen) unlockBody()
+      window.cancelAnimationFrame(focusFrame)
+      document.documentElement.style.overflow = prevHtmlOverflow
+      document.body.style.overflow = prevBodyOverflow
+      backgroundElements.forEach((el) => {
+        el.inert = false
+        el.removeAttribute('aria-hidden')
+      })
     }
-  }, [mobileOpen, unlockBody])
+  }, [mobileOpen])
 
-  // ---------------------------------------------------------------------------
-  // Mobile menu open / close
-  // ---------------------------------------------------------------------------
-  const openMobileMenu = useCallback(() => {
-    setMobileOpen(true)
-    lockBody()
-    setTimeout(() => {
-      const firstLink = mobileMenuRef.current?.querySelector<HTMLElement>(
-        'a[href], button',
-      )
-      firstLink?.focus()
-    }, 50)
-  }, [lockBody])
-
-  const closeMobileMenu = useCallback(() => {
+  const openMobileMenu = useCallback(() => setMobileOpen(true), [])
+  const closeMobileMenu = useCallback((restoreFocus = true) => {
     setMobileOpen(false)
-    unlockBody()
-    menuTriggerRef.current?.focus()
-  }, [unlockBody])
+    if (restoreFocus) window.requestAnimationFrame(() => menuTriggerRef.current?.focus())
+  }, [])
 
-  // Escape key
+  // Escape key & focus trapping in mobile drawer
   useEffect(() => {
     if (!mobileOpen) return
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeMobileMenu()
-    }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
-  }, [mobileOpen, closeMobileMenu])
-
-  // ---------------------------------------------------------------------------
-  // Focus trap for mobile menu
-  // ---------------------------------------------------------------------------
-  useEffect(() => {
-    if (!mobileOpen) return
-
-    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        closeMobileMenu()
+        return
+      }
       if (e.key !== 'Tab') return
-      const container = mobileMenuRef.current
-      if (!container) return
 
-      const focusable = container.querySelectorAll<HTMLElement>(
-        'a[href], button, [tabindex]:not([tabindex="-1"])',
-      )
+      const dialog = mobileDialogRef.current
+      if (!dialog) return
+      const focusable = Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR))
       if (focusable.length === 0) return
-
       const first = focusable[0]
       const last = focusable[focusable.length - 1]
 
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault()
-          last.focus()
-        }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault()
-          first.focus()
-        }
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault()
+        first.focus()
+      } else if (!dialog.contains(document.activeElement)) {
+        e.preventDefault()
+        first.focus()
       }
     }
-
     document.addEventListener('keydown', onKeyDown)
     return () => document.removeEventListener('keydown', onKeyDown)
-  }, [mobileOpen])
+  }, [closeMobileMenu, mobileOpen])
 
-  // ---------------------------------------------------------------------------
-  // Nav link click (close mobile menu if open)
-  // ---------------------------------------------------------------------------
-  const handleNavClick = useCallback(() => {
-    if (mobileOpen) closeMobileMenu()
-  }, [mobileOpen, closeMobileMenu])
+  const isLinkActive = useCallback(
+    (item: (typeof navItems)[number]) => {
+      // In the hero section or top of the page, no navigation link should be active
+      if (isHeroVisible || !activeSection) return false
+      return item.target.kind === 'section'
+        ? currentPath === item.target.path && activeSection === item.target.sectionId
+        : currentPath === item.target.path
+    },
+    [activeSection, currentPath, isHeroVisible],
+  )
 
-  // ---------------------------------------------------------------------------
-  // Navigation items with localization
-  // ---------------------------------------------------------------------------
-  const navItems = navLinks.map((link, index) => ({
-    ...link,
-    number: String(index + 1).padStart(2, '0'),
-    displayLabel: NAV_LABELS[lang][link.href] || link.label,
-  }))
-
-  const t = UI_TEXT[lang]
   const shouldShowStickyBar = isMobile && !isHeroVisible && !isFooterVisible && !mobileOpen
 
   return (
     <>
+      {/* ── Desktop & Mobile Floating Island Header ── */}
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-[background,border-color,backdrop-filter] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          scrolled || mobileOpen
-            ? 'border-b border-line-dark/70 bg-coal-950/90 backdrop-blur-xl'
-            : 'bg-transparent'
-        }`}
+        aria-hidden={mobileOpen ? 'true' : undefined}
+        className="pointer-events-none fixed inset-x-0 top-0 z-50 pt-3 sm:pt-4"
       >
-        <Container>
-          <div className="relative flex h-[var(--header-height)] items-center justify-between">
-            {/* Logo */}
-            <a
-              href="#"
-              className="relative z-10 shrink-0"
-              aria-label="Back to top"
-              onClick={(e) => {
-                e.preventDefault()
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-                if (mobileOpen) closeMobileMenu()
-              }}
-            >
-              <PeriPeriLogo
-                height={isMobile ? 44 : 52}
-                className="w-auto"
-              />
-            </a>
+        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+          <div
+            className={`pointer-events-auto relative flex items-center justify-between rounded-2xl border px-3.5 py-2.5 sm:rounded-full sm:px-5 sm:py-2.5 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ${
+              scrolled
+                ? 'border-white/15 bg-coal-950/95 shadow-[0_16px_40px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.05)] backdrop-blur-2xl'
+                : 'border-white/10 bg-coal-950/80 shadow-[0_12px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.03)] backdrop-blur-xl'
+            }`}
+          >
+            {/* Left: Brand Identity */}
+            <div className="flex items-center gap-3">
+              <a
+                href="/"
+                className="group relative flex items-center rounded-lg transition-transform duration-200 hover:scale-[1.02] focus-visible:outline-cream"
+                aria-label="Peri Peri Grill — Accueil"
+              >
+                <PeriPeriLogo
+                  height={44}
+                  className="h-9 w-auto sm:h-10 lg:h-[44px]"
+                />
+              </a>
+            </div>
 
-            {/* Desktop navigation */}
+            {/* Center: Desktop Navigation */}
             <nav
-              aria-label="Main navigation"
-              className="hidden items-center gap-7 lg:flex lg:ml-12"
+              aria-label="Navigation principale"
+              className="hidden items-center gap-6 xl:gap-8 lg:flex"
             >
               {navItems.map((item) => {
-                const isActive = activeSection === item.href
+                const active = isLinkActive(item)
                 return (
                   <a
-                    key={item.href}
+                    key={item.id}
                     href={item.href}
-                    className={`group relative py-2 text-[0.8125rem] font-semibold uppercase tracking-[0.1em] transition-colors duration-200 ${
-                      isActive ? 'text-cream' : 'text-cream/60 hover:text-cream'
+                    aria-current={active ? 'location' : undefined}
+                    className={`group relative py-1 text-xs font-bold uppercase tracking-[0.1em] transition-colors duration-200 ${
+                      active ? 'text-cream' : 'text-cream/65 hover:text-cream'
                     }`}
                   >
-                    {item.displayLabel}
+                    <span>{item.displayLabel}</span>
                     <span
                       aria-hidden="true"
-                      className={`absolute bottom-0 left-0 h-px bg-peri-red transition-[width] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                        isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                      className={`absolute inset-x-0 -bottom-1 h-[2px] rounded-full bg-gradient-to-r from-peri-red to-ember transition-all duration-200 ${
+                        active
+                          ? 'scale-x-100 opacity-100'
+                          : 'scale-x-0 opacity-0 group-hover:scale-x-100 group-hover:opacity-100 origin-left'
                       }`}
                     />
                   </a>
@@ -343,279 +255,319 @@ export function Header() {
               })}
             </nav>
 
-            {/* Desktop Actions & Language Toggle */}
-            <div className="hidden items-center gap-4 lg:flex">
-              {/* Language segmented pill */}
-              <div
-                role="group"
-                aria-label="Language selection"
-                className="flex items-center rounded-xl border border-line-dark/60 bg-coal-900/60 p-1 backdrop-blur-md"
-              >
-                <button
-                  type="button"
-                  onClick={() => setLang('fr')}
-                  className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all duration-150 ${
-                    lang === 'fr'
-                      ? 'bg-peri-red text-cream shadow-xs'
-                      : 'text-smoke hover:text-cream'
-                  }`}
-                  aria-pressed={lang === 'fr'}
-                >
-                  FR
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLang('en')}
-                  className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all duration-150 ${
-                    lang === 'en'
-                      ? 'bg-peri-red text-cream shadow-xs'
-                      : 'text-smoke hover:text-cream'
-                  }`}
-                  aria-pressed={lang === 'en'}
-                >
-                  EN
-                </button>
-              </div>
+            {/* Right: Desktop Controls (Language, Location, Glovo) */}
+            <div className="hidden items-center gap-2 xl:gap-2.5 lg:flex">
+              {/* 1. Language Selector — Tertiary / Utility */}
+              <DesktopSegmentedLocaleSelector />
 
-              {/* Desktop CTA */}
+              {/* 2. Location Button — Secondary CTA */}
               <a
                 href={restaurant.links.maps}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl border border-line-dark px-5 py-2.5 text-[0.8125rem] font-bold uppercase tracking-wide text-cream transition-colors duration-200 hover:border-cream/40 hover:bg-cream/10"
+                className="group inline-flex h-10 items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 xl:px-4 text-xs font-bold uppercase tracking-wider text-cream backdrop-blur-sm transition-all duration-200 hover:border-white/25 hover:bg-white/[0.08] hover:text-white focus-visible:outline-cream active:scale-95"
+                aria-label="Nous trouver à Agadir Bay sur Google Maps"
               >
-                <MapPin className="size-4 text-peri-red" aria-hidden="true" />
-                {t.findUs}
+                <MapPin className="size-4 text-peri-red transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
+                <span>Nous trouver</span>
+              </a>
+
+              {/* 3. Glovo Button — Primary CTA */}
+              <a
+                href={restaurant.links.glovo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex h-10 items-center gap-2 rounded-full bg-[#FFC244] px-4 xl:px-5 text-xs font-black uppercase tracking-wider text-[#121f19] shadow-[0_2px_10px_rgba(255,194,68,0.25)] transition-all duration-200 hover:bg-[#ffd166] hover:shadow-[0_4px_16px_rgba(255,194,68,0.4)] hover:scale-[1.02] focus-visible:outline-[#FFC244] active:scale-95"
+                aria-label="Commander Peri Peri Grill sur Glovo"
+              >
+                <SiGlovo className="size-4 shrink-0 text-[#00A082]" aria-hidden="true" />
+                <span className="font-extrabold tracking-wide">Commander</span>
+                <ArrowUpRight
+                  className="size-3.5 shrink-0 text-[#007b65] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                />
               </a>
             </div>
 
-            {/* Mobile menu trigger button */}
+            {/* Mobile Controls (< 1024px) */}
             <div className="flex items-center gap-2 lg:hidden">
+              <a
+                href={restaurant.links.glovo}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Commander sur Glovo"
+                className="inline-flex h-10 items-center gap-1.5 rounded-full bg-[#FFC244] px-4 text-xs font-black uppercase tracking-wider text-[#121f19] shadow-[0_2px_8px_rgba(255,194,68,0.25)] transition-transform active:scale-95"
+              >
+                <SiGlovo className="size-3.5 text-[#00A082]" aria-hidden="true" />
+                <span>Commander</span>
+              </a>
+
               <button
                 ref={menuTriggerRef}
                 type="button"
-                onClick={mobileOpen ? closeMobileMenu : openMobileMenu}
-                className="relative z-10 flex size-11 items-center justify-center rounded-xl border border-line-dark/60 bg-coal-900/60 text-cream backdrop-blur-md transition-all active:scale-95"
-                aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+                onClick={openMobileMenu}
+                aria-label="Ouvrir le menu de navigation"
                 aria-expanded={mobileOpen}
-                aria-controls="mobile-menu-panel"
+                aria-controls="mobile-navigation-dialog"
+                className="flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-cream transition-all duration-200 hover:border-white/25 hover:bg-white/[0.08] focus-visible:outline-cream active:scale-95"
               >
-                {mobileOpen ? (
-                  <X className="size-6 text-peri-red" strokeWidth={2} />
-                ) : (
-                  <Menu className="size-6" strokeWidth={1.75} />
-                )}
+                <Menu className="size-5 text-cream" strokeWidth={2} aria-hidden="true" />
               </button>
             </div>
           </div>
-        </Container>
+        </div>
       </header>
 
-      {/* Enhanced Glassy Mobile Menu Panel */}
+      {/* ── Immersive Mobile Navigation Drawer (Modal) ── */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            id="mobile-menu-panel"
-            ref={mobileMenuRef}
+            id="mobile-navigation-dialog"
+            ref={mobileDialogRef}
             role="dialog"
-            aria-label="Mobile navigation"
-            initial={reduce ? { opacity: 1 } : { opacity: 0, y: -12 }}
-            animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -12 }}
-            transition={{ duration: reduce ? 0 : 0.28, ease: EASE_OUT }}
-            className="fixed inset-x-0 bottom-0 top-[var(--header-height)] z-50 flex flex-col justify-between overflow-y-auto border-t border-line-dark/60 bg-coal-950/85 backdrop-blur-2xl backdrop-saturate-150 lg:hidden"
-            style={{ maxHeight: 'calc(100dvh - var(--header-height))' }}
+            aria-modal="true"
+            aria-labelledby="mobile-navigation-title"
+            dir="ltr"
+            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.98 }}
+            transition={{ duration: reduceMotion ? 0 : 0.22, ease: EASE_OUT }}
+            className="fixed inset-0 z-[100] flex h-screen [height:100dvh] flex-col overflow-hidden bg-coal-950/98 text-cream backdrop-blur-3xl lg:hidden"
           >
-            {/* Subtle warm ember gradient accent in the background */}
+            {/* Atmospheric Flame Ambient Flare */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-gradient-to-b from-peri-red/[0.08] via-transparent to-coal-950/50"
+              className="pointer-events-none absolute -right-20 -top-20 size-80 rounded-full bg-peri-red/20 blur-[100px]"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -bottom-20 -left-20 size-80 rounded-full bg-ember/15 blur-[100px]"
             />
 
-            <div className="relative z-10 flex flex-1 flex-col justify-between px-5 py-5 sm:px-8">
-              {/* Top sub-header: Status Badge & Language Switcher */}
-              <div className="flex items-center justify-between border-b border-line-dark/40 pb-4">
-                <div className="flex items-center gap-2">
-                  <span className="relative flex size-2.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                    <span className="relative inline-flex size-2.5 rounded-full bg-emerald-500" />
-                  </span>
-                  <span className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-cream/80">
-                    {t.locationBadge}
-                  </span>
-                </div>
+            {/* Modal Header */}
+            <div className="relative z-10 shrink-0 border-b border-white/10 pt-[env(safe-area-inset-top)]">
+              <div className="mx-auto flex h-16 w-full max-w-content items-center justify-between px-4 sm:px-6">
+                <a
+                  href="/"
+                  onClick={() => closeMobileMenu(false)}
+                  className="shrink-0 rounded-lg focus-visible:outline-cream"
+                  aria-label="Peri Peri Grill — Retour à l'accueil"
+                >
+                  <PeriPeriLogo height={42} className="h-9 w-auto" />
+                </a>
 
-                {/* Tactile Language Switcher */}
-                <div className="flex items-center gap-1.5 rounded-xl border border-line-dark/70 bg-coal-900/80 p-1 shadow-inner">
-                  <Globe className="ml-1 size-3.5 text-smoke" aria-hidden="true" />
+                <div className="flex items-center gap-2.5">
+                  <LocaleSelector />
                   <button
+                    ref={closeButtonRef}
                     type="button"
-                    onClick={() => setLang('fr')}
-                    className={`rounded-lg px-2.5 py-1 text-[0.6875rem] font-bold uppercase tracking-wider transition-all duration-150 ${
-                      lang === 'fr'
-                        ? 'bg-peri-red text-cream shadow-xs'
-                        : 'text-smoke hover:text-cream'
-                    }`}
-                    aria-pressed={lang === 'fr'}
+                    onClick={() => closeMobileMenu()}
+                    className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.05] text-cream transition-all duration-200 hover:border-peri-red hover:bg-peri-red/20 hover:text-peri-red focus-visible:outline-cream active:scale-95"
+                    aria-label="Fermer le menu"
                   >
-                    FR
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLang('en')}
-                    className={`rounded-lg px-2.5 py-1 text-[0.6875rem] font-bold uppercase tracking-wider transition-all duration-150 ${
-                      lang === 'en'
-                        ? 'bg-peri-red text-cream shadow-xs'
-                        : 'text-smoke hover:text-cream'
-                    }`}
-                    aria-pressed={lang === 'en'}
-                  >
-                    EN
+                    <X className="size-5" strokeWidth={2.2} aria-hidden="true" />
                   </button>
                 </div>
               </div>
+            </div>
 
-              {/* Navigation items with fixed geometry & aligned badges */}
-              <nav aria-label="Mobile navigation links" className="my-auto py-4">
-                <div className="flex flex-col gap-1.5">
-                  {navItems.map((item, i) => (
-                    <motion.a
-                      key={item.href}
-                      href={item.href}
-                      onClick={handleNavClick}
-                      initial={reduce ? false : { opacity: 0, x: -10 }}
-                      animate={reduce ? false : { opacity: 1, x: 0 }}
-                      transition={{
-                        duration: reduce ? 0 : 0.24,
-                        delay: reduce ? 0 : i * 0.035,
-                        ease: EASE_OUT,
-                      }}
-                      className="group flex items-center justify-between rounded-xl border border-transparent px-3 py-3 transition-all duration-200 hover:border-line-dark/60 hover:bg-coal-900/50 active:scale-[0.99] active:bg-coal-900/80"
+            {/* Scrollable Content Body */}
+            <div className="mobile-nav-scroll relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6 sm:py-6">
+              <Container className="flex min-h-full flex-col justify-between space-y-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+                <div className="space-y-5">
+                  {/* Category Header */}
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                    <h2
+                      id="mobile-navigation-title"
+                      className="text-[0.6875rem] font-extrabold uppercase tracking-[0.2em] text-smoke"
                     >
-                      <div className="flex items-center gap-3.5">
-                        {/* Refined numeric badge */}
-                        <span className="flex size-7 shrink-0 items-center justify-center rounded-lg border border-peri-red/25 bg-peri-red/10 font-mono text-[0.6875rem] font-bold tracking-wider text-peri-red transition-colors duration-200 group-hover:border-peri-red group-hover:bg-peri-red group-hover:text-cream">
-                          {item.number}
-                        </span>
-                        <span className="font-display text-[1.4rem] uppercase tracking-[-0.01em] text-cream transition-colors duration-200 group-hover:text-peri-red sm:text-[1.65rem]">
-                          {item.displayLabel}
-                        </span>
-                      </div>
+                      Explorer le restaurant
+                    </h2>
+                  </div>
 
-                      <ArrowRight
-                        aria-hidden="true"
-                        className="size-4 shrink-0 text-smoke/40 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-peri-red"
-                      />
-                    </motion.a>
-                  ))}
+                  {/* Clean Nav Items with Subtitles (No numbers) */}
+                  <nav aria-label="Navigation mobile" className="space-y-1">
+                    {navItems.map((item, index) => {
+                      const active = isLinkActive(item)
+                      return (
+                        <motion.a
+                          key={item.id}
+                          href={item.href}
+                          onClick={() => closeMobileMenu(false)}
+                          aria-current={active ? 'location' : undefined}
+                          initial={reduceMotion ? false : { opacity: 0, x: -12 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{
+                            duration: reduceMotion ? 0 : 0.2,
+                            delay: reduceMotion ? 0 : index * 0.04,
+                            ease: EASE_OUT,
+                          }}
+                          className={`group flex items-center justify-between rounded-2xl p-3.5 transition-all active:scale-[0.98] ${
+                            active
+                              ? 'border border-peri-red/40 bg-gradient-to-r from-peri-red/20 to-ember/10 shadow-[0_0_20px_rgba(231,55,31,0.25)]'
+                              : 'hover:bg-white/[0.04]'
+                          }`}
+                        >
+                          <div className="min-w-0">
+                            <span
+                              className={`block font-display text-xl uppercase tracking-tight transition-colors sm:text-2xl ${
+                                active ? 'text-ember' : 'text-cream group-hover:text-ember'
+                              }`}
+                            >
+                              {item.displayLabel}
+                            </span>
+                            {item.subtitle && (
+                              <span className="block truncate text-xs text-smoke mt-0.5">
+                                {item.subtitle}
+                              </span>
+                            )}
+                          </div>
+                          <ArrowRight
+                            aria-hidden="true"
+                            className={`size-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 ${
+                              active ? 'text-ember' : 'text-white/30 group-hover:text-ember'
+                            }`}
+                          />
+                        </motion.a>
+                      )
+                    })}
+                  </nav>
                 </div>
-              </nav>
 
-              {/* High-conversion action buttons & social hub */}
-              <div className="border-t border-line-dark/40 pt-4">
-                <div className="flex flex-col gap-2.5">
-                  {/* Primary Glovo CTA with glowing gradient */}
+                {/* Conversion & Direct Contact Hub */}
+                <div className="space-y-3.5 border-t border-white/10 pt-5">
+                  {/* Primary Order Banner Card */}
                   <a
                     href={restaurant.links.glovo}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={handleNavClick}
-                    className="group relative flex min-h-[50px] items-center justify-center gap-2.5 overflow-hidden rounded-xl bg-linear-to-r from-peri-red via-[#f04229] to-ember px-5 text-[0.875rem] font-bold uppercase tracking-wider text-cream shadow-[0_4px_16px_rgba(231,55,31,0.35)] transition-all duration-200 hover:shadow-[0_6px_22px_rgba(255,106,26,0.45)] active:scale-[0.98]"
+                    onClick={() => closeMobileMenu(false)}
+                    className="group relative flex items-center justify-between gap-3 overflow-hidden rounded-2xl bg-gradient-to-r from-peri-red via-[#f04824] to-ember p-4 text-cream shadow-[0_8px_24px_rgba(231,55,31,0.45)] transition-all active:scale-[0.98]"
+                    aria-label="Commander en livraison sur Glovo"
                   >
-                    <SiGlovo className="size-5 shrink-0 text-[#00b140]" />
-                    <span>{t.orderGlovo}</span>
-                    <ArrowRight className="size-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
+                    <div className="flex items-center gap-3.5">
+                      <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-black/20 backdrop-blur-md">
+                        <SiGlovo className="size-6 text-[#FFC244]" aria-hidden="true" />
+                      </div>
+                      <div>
+                        <span className="block text-[0.625rem] font-black uppercase tracking-widest text-cream/80">
+                          Livraison rapide à domicile
+                        </span>
+                        <span className="font-display text-lg uppercase leading-tight tracking-tight text-cream">
+                          Commander sur Glovo
+                        </span>
+                      </div>
+                    </div>
+                    <ArrowUpRight
+                      className="size-5 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                      strokeWidth={2.5}
+                      aria-hidden="true"
+                    />
                   </a>
 
-                  {/* Secondary Directions CTA */}
+                  {/* Secondary Directions Card */}
                   <a
                     href={restaurant.links.maps}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={handleNavClick}
-                    className="flex min-h-[46px] items-center justify-center gap-2 rounded-xl border border-line-dark/80 bg-coal-900/60 px-5 text-[0.8125rem] font-bold uppercase tracking-wider text-cream backdrop-blur-md transition-all duration-200 hover:border-cream/40 hover:bg-cream/10 active:scale-[0.98]"
+                    onClick={() => closeMobileMenu(false)}
+                    className="group flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3.5 text-cream transition-all hover:border-white/20 hover:bg-white/[0.08] active:scale-[0.98]"
+                    aria-label="Itinéraire vers le restaurant"
                   >
-                    <MapPin className="size-4 shrink-0 text-peri-red" aria-hidden="true" />
-                    <span>{t.findUs} (Agadir Bay)</span>
+                    <div className="flex items-center gap-3.5">
+                      <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-peri-red/15 text-peri-red">
+                        <MapPin className="size-5" strokeWidth={2.2} aria-hidden="true" />
+                      </div>
+                      <div>
+                        <span className="block text-[0.625rem] font-bold uppercase tracking-widest text-smoke">
+                          Office Centre · Agadir Bay
+                        </span>
+                        <span className="font-display text-base uppercase leading-tight tracking-tight text-cream">
+                          Itinéraire Google Maps
+                        </span>
+                      </div>
+                    </div>
+                    <ArrowUpRight
+                      className="size-5 shrink-0 text-white/40 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-cream"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
                   </a>
+
+                  {/* Instant Contact Pill Buttons */}
+                  <div className="pt-2">
+                    <p className="text-[0.625rem] font-extrabold uppercase tracking-[0.18em] text-smoke mb-2.5">
+                      Contact rapide
+                    </p>
+                    <div className="grid grid-cols-3 gap-2">
+                      {/* WhatsApp with pre-filled message */}
+                      <a
+                        href="https://wa.me/212609470316?text=Bonjour%20Peri%20Peri%20Grill,%20j'aimerais%20commander"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex h-12 items-center justify-center gap-2 rounded-xl border border-[#25D366]/40 bg-[#25D366]/10 text-xs font-bold text-[#25D366] transition-all hover:bg-[#25D366] hover:text-coal-950 active:scale-95"
+                      >
+                        <WhatsAppIcon className="size-4" />
+                        <span>WhatsApp</span>
+                      </a>
+
+                      {/* Phone Call */}
+                      <a
+                        href={restaurant.phoneHref}
+                        className="flex h-12 items-center justify-center gap-2 rounded-xl border border-peri-red/40 bg-peri-red/10 text-xs font-bold text-peri-red transition-all hover:bg-peri-red hover:text-cream active:scale-95"
+                      >
+                        <Phone className="size-4" aria-hidden="true" />
+                        <span>Appeler</span>
+                      </a>
+
+                      {/* Instagram */}
+                      <a
+                        href={restaurant.links.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/15 bg-gradient-to-tr from-[#833AB4] via-[#E1306C] to-[#F77737] text-xs font-bold text-white transition-all hover:brightness-110 active:scale-95"
+                      >
+                        <SiInstagram className="size-4" aria-hidden="true" />
+                        <span>Instagram</span>
+                      </a>
+                    </div>
+                  </div>
                 </div>
-
-                {/* Social links & direct contact bar */}
-                <div className="mt-4 flex items-center justify-center gap-3">
-                  <a
-                    href={restaurant.links.instagram}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={t.instaAria}
-                    className="flex size-11 items-center justify-center rounded-xl border border-line-dark/70 bg-coal-900/60 text-cream backdrop-blur-md transition-all duration-200 hover:border-peri-red/50 hover:bg-peri-red/10 hover:text-peri-red active:scale-95"
-                  >
-                    <SiInstagram className="size-4" />
-                  </a>
-
-                  {restaurant.links.whatsapp && (
-                    <a
-                      href={restaurant.links.whatsapp}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={t.whatsappAria}
-                      className="flex size-11 items-center justify-center rounded-xl border border-line-dark/70 bg-coal-900/60 text-[#25d366] backdrop-blur-md transition-all duration-200 hover:border-emerald-500/50 hover:bg-emerald-500/10 active:scale-95"
-                    >
-                      <WhatsAppIcon className="size-4" />
-                    </a>
-                  )}
-
-                  <a
-                    href={restaurant.links.maps}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={t.mapsAria}
-                    className="flex size-11 items-center justify-center rounded-xl border border-line-dark/70 bg-coal-900/60 text-cream backdrop-blur-md transition-all duration-200 hover:border-peri-red/50 hover:bg-peri-red/10 hover:text-peri-red active:scale-95"
-                  >
-                    <SiGooglemaps className="size-4" />
-                  </a>
-
-                  <a
-                    href={restaurant.phoneHref}
-                    aria-label={t.phoneAria}
-                    className="flex size-11 items-center justify-center rounded-xl border border-line-dark/70 bg-coal-900/60 text-cream backdrop-blur-md transition-all duration-200 hover:border-peri-red/50 hover:bg-peri-red/10 hover:text-peri-red active:scale-95"
-                  >
-                    <Phone className="size-4" />
-                  </a>
-                </div>
-              </div>
+              </Container>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Mobile sticky bottom action bar (when not inside menu) */}
+      {/* ── Mobile Sticky Bottom Action Bar ── */}
       <AnimatePresence>
         {shouldShowStickyBar && (
           <motion.div
-            initial={reduce ? { opacity: 1 } : { opacity: 0, y: 12 }}
-            animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            exit={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
-            transition={{ duration: reduce ? 0 : 0.25, ease: EASE_OUT }}
-            className="fixed right-0 bottom-0 left-0 z-40 border-t border-line-dark/70 bg-coal-950/90 backdrop-blur-xl px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] pt-3 lg:hidden"
+            initial={reduceMotion ? { opacity: 1 } : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
+            transition={{ duration: reduceMotion ? 0 : 0.22, ease: EASE_OUT }}
+            className="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-sm lg:hidden"
           >
-            <div className="flex gap-3">
+            <div className="flex items-center gap-2 rounded-full border border-white/15 bg-coal-950/92 p-1.5 shadow-[0_12px_32px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.06)] backdrop-blur-2xl">
               <a
                 href={restaurant.links.glovo}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl bg-linear-to-r from-peri-red to-ember px-4 text-[0.875rem] font-bold uppercase tracking-wide text-cream shadow-[0_4px_14px_rgba(231,55,31,0.3)] transition-colors duration-200 hover:bg-ember active:scale-[0.98]"
+                className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-peri-red to-ember px-4 text-xs font-extrabold uppercase tracking-wider text-cream shadow-[0_4px_16px_rgba(231,55,31,0.4)] transition-transform active:scale-[0.98]"
               >
-                <SiGlovo className="size-4 text-[#00b140]" />
-                {t.orderNow}
+                <SiGlovo className="size-4" aria-hidden="true" />
+                <span>Commander</span>
               </a>
               <a
                 href={restaurant.links.maps}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-xl border border-line-dark/80 bg-coal-900/60 backdrop-blur-md px-4 text-[0.875rem] font-bold uppercase tracking-wide text-cream transition-colors duration-200 hover:border-cream/40 hover:bg-cream/10 active:scale-[0.98]"
+                className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 text-xs font-bold uppercase tracking-wider text-cream transition-colors hover:bg-white/[0.1] active:scale-[0.98]"
               >
-                <MapPin className="size-4 text-peri-red" aria-hidden="true" />
-                {t.findUs}
+                <MapPin className="size-3.5 text-peri-red" aria-hidden="true" />
+                <span>Itinéraire</span>
               </a>
             </div>
           </motion.div>

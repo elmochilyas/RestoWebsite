@@ -95,3 +95,24 @@
     }
   }
 }
+
+@layer components {
+  .mobile-nav-dialog {
+    --header-height: clamp(3.75rem, 9dvh, 4.25rem);
+    --mobile-nav-body-padding: clamp(0.5rem, 1.8dvh, 1rem);
+    --mobile-nav-section-gap: clamp(0.5rem, 1.7dvh, 1rem);
+    --mobile-nav-nav-padding: clamp(0.25rem, 1.1dvh, 0.625rem);
+    --mobile-nav-link-height: clamp(2.75rem, 7.5dvh, 4rem);
+    --mobile-nav-link-font: clamp(1.4rem, min(7.4vw, 4.2dvh), 2rem);
+    --mobile-nav-cta-height: clamp(3.5rem, 8.75dvh, 4.5rem);
+    z-index: 60;
+  }
+
+  .mobile-nav-scroll {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(246, 234, 215, 0.18) transparent;
+  }
+}
