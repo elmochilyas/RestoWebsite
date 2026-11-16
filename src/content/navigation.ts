@@ -27,14 +27,14 @@ export type NavigationLink = {
 
 export const navLinks = [
   {
-    id: 'menu', number: '01', label: 'MENU', href: '/#menu',
+    id: 'menu', number: '01', label: 'MENU', href: '/menu',
     labels: { fr: 'MENU', en: 'MENU', ar: 'قائمة الطعام' },
     subtitles: {
       fr: 'Poulet braisé, burgers & combos',
       en: 'Flame-grilled chicken & burgers',
       ar: 'دجاج مشوي، برجر ووجبات',
     },
-    target: { kind: 'section', path: '/', sectionId: 'menu' },
+    target: { kind: 'page', path: '/menu' },
   },
   {
     id: 'story', number: '02', label: 'NOTRE HISTOIRE', href: '/#story',

@@ -1,0 +1,324 @@
+---
+import { ArrowUpRight, Flame, Sparkles } from 'lucide-react';
+import { MdDeliveryDining } from 'react-icons/md';
+import { SiGlovo } from 'react-icons/si';
+import Layout from '../layouts/Layout.astro';
+import { Header } from '../components/layout/Header';
+import Footer from '../components/astro/Footer.astro';
+import CategoryBrowser from '../components/astro/CategoryBrowser.astro';
+import Container from '../components/ui/Container.astro';
+import PortionSticker from '../components/ui/PortionSticker.astro';
+import { menuCategories, menuItems, restaurant } from '../content';
+
+// Group menu items by category ID
+const itemsByCategory = menuCategories.map((cat) => ({
+  ...cat,
+  items: menuItems.filter((item) => item.categoryId === cat.id),
+}));
+---
+
+<Layout
+  title="Notre Carte — Peri Peri Grill | Poulet Braisé & Burgers à Agadir Bay"
+  description="Découvrez la carte complète de Peri Peri Grill à Agadir Bay : plateaux festifs, poulet braisé à la flamme, burgers gourmets, wraps, tacos, bowls et milkshakes artisanaux. Sur place, à emporter ou livraison Glovo."
+>
+  <Header client:load currentPath="/menu" />
+
+  <main id="main-content" class="bg-coal-950 text-cream pt-20 sm:pt-24 lg:pt-28 pb-20">
+    {/* ── Category Section Header: Browse By Category ── */}
+    <div class="text-center pt-2 sm:pt-4 pb-3 sm:pb-5">
+      <h1 class="font-editorial text-2xl sm:text-3xl lg:text-4xl text-cream tracking-tight font-medium">
+        Browse By Category
+      </h1>
+      <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-peri-red/90 mt-1">
+        Notre Carte · Agadir Bay
+      </p>
+    </div>
+
+    {/* Sentinel for sticky category nav shrink detection: placed right before CategoryBrowser */}
+    <div id="category-sentinel" class="h-px w-full pointer-events-none"></div>
+
+    {/* ── Visual Circular Category Navigation ── */}
+    <CategoryBrowser />
+
+    {/* ── Menu Category Sections ── */}
+    <div class="space-y-16 sm:space-y-20 lg:space-y-24 mt-12 sm:mt-16">
+      {itemsByCategory.map((category) => (
+        <section
+          id={category.id}
+          aria-labelledby={`heading-${category.id}`}
+          class="scroll-mt-40 sm:scroll-mt-44"
+        >
+          <Container>
+            {/* Category Header */}
+            <div class="border-b border-white/10 pb-4 mb-8">
+              <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2">
+                <h2
+                  id={`heading-${category.id}`}
+                  class="font-display text-2xl uppercase tracking-tight text-cream sm:text-3xl lg:text-4xl"
+                >
+                  {category.name}
+                </h2>
+                {category.items.some((i) => i.mealPriceMad) && (
+                  <span class="text-xs font-bold uppercase tracking-wider text-peri-red/90">
+                    Option Menu disponible (Frites + Boisson + Sauce)
+                  </span>
+                )}
+              </div>
+              {category.description && (
+                <p class="mt-2 text-xs sm:text-sm text-smoke max-w-2xl leading-relaxed">
+                  {category.description}
+                </p>
+              )}
+            </div>
+
+            {/* Category Items Layout */}
+            {category.id === 'plateaux' ? (
+              /* Plateaux: Editorial Featured Grid */
+              <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+                {category.items.map((dish) => (
+                  <article class="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-coal-900/90 transition-all duration-300 hover:border-peri-red/50 hover:shadow-[0_8px_30px_rgba(0,0,0,0.6)]">
+                    {dish.image && (
+                      <div class="relative aspect-[16/10] w-full overflow-hidden bg-coal-950">
+                        <img
+                          src={dish.image}
+                          alt={dish.imageAlt ?? dish.name}
+                          loading="lazy"
+                          decoding="async"
+                          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div
+                          aria-hidden="true"
+                          class="absolute inset-0 bg-gradient-to-t from-coal-900 via-transparent to-transparent"
+                        />
+                        {dish.badge && (
+                          <span class="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full bg-peri-red px-3 py-1 text-[11px] font-black uppercase tracking-wider text-cream shadow-md">
+                            <Sparkles className="size-3 text-cream" aria-hidden="true" />
+                            {dish.badge}
+                          </span>
+                        )}
+                        {dish.portionCount ? (
+                          <div class="absolute top-3 right-3 z-10">
+                            <PortionSticker count={dish.portionCount} size={48} class="hover:scale-110 transition-transform duration-300 drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]" />
+                          </div>
+                        ) : dish.serves ? (
+                          <span class="absolute top-3 right-3 rounded-full border border-white/15 bg-coal-950/80 px-2.5 py-0.5 text-xs font-bold text-cream backdrop-blur-md">
+                            {dish.serves}
+                          </span>
+                        ) : null}
+                      </div>
+                    )}
+
+                    <div class="flex flex-1 flex-col justify-between p-5">
+                      <div>
+                        {!dish.image && (dish.portionCount || dish.serves) && (
+                          <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold uppercase tracking-wider text-peri-red">
+                              {category.name}
+                            </span>
+                            {dish.portionCount ? (
+                              <PortionSticker count={dish.portionCount} size={46} class="hover:scale-110 transition-transform duration-300 drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]" />
+                            ) : (
+                              <span class="rounded-full border border-white/15 bg-coal-950/80 px-2.5 py-0.5 text-xs font-bold text-cream">
+                                {dish.serves}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <h3 class="font-display text-xl uppercase tracking-tight text-cream">
+                          {dish.name}
+                        </h3>
+                        {dish.description && (
+                          <p class="mt-2 text-xs sm:text-sm leading-relaxed text-cream/75">
+                            {dish.description}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Pricing */}
+                      <div class="mt-5 pt-4 border-t border-white/5 flex items-baseline justify-between">
+                        {dish.variants ? (
+                          <div class="flex flex-wrap items-center gap-3">
+                            {dish.variants.map((v) => (
+                              <span class="inline-flex items-center gap-1.5 rounded-lg bg-coal-950 px-2.5 py-1 text-xs font-bold text-cream border border-white/10">
+                                <span>{v.name}:</span>
+                                <span class="text-[#FFC244] font-display font-black">{v.priceMad} DH</span>
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <div class="flex items-baseline gap-1.5">
+                            <span class="font-display text-2xl font-black text-[#FFC244]">
+                              {dish.priceMad}
+                            </span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-cream/70">
+                              DH
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : category.id === 'poulet-grille' ? (
+              /* Poulet Grillé: High-impact Trio of Portion Options */
+              <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
+                {category.items.map((dish) => (
+                  <article class="group relative overflow-hidden rounded-2xl border border-white/10 bg-coal-900/90 p-6 transition-all duration-300 hover:border-peri-red/60 hover:shadow-[0_8px_30px_rgba(231,55,31,0.2)]">
+                    <div class="flex items-center justify-between">
+                      <span class="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-peri-red">
+                        <Flame className="size-3.5 text-peri-red" aria-hidden="true" />
+                        Grillé à la braise
+                      </span>
+                      {dish.badge && (
+                        <span class="rounded-full bg-peri-red/20 border border-peri-red/40 px-2.5 py-0.5 text-[10px] font-bold text-peri-red">
+                          {dish.badge}
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 class="mt-3 font-display text-2xl uppercase tracking-tight text-cream">
+                      {dish.name}
+                    </h3>
+
+                    {dish.description && (
+                      <p class="mt-2 text-xs sm:text-sm leading-relaxed text-cream/75">
+                        {dish.description}
+                      </p>
+                    )}
+
+                    <div class="mt-6 pt-4 border-t border-white/10 flex items-baseline justify-between">
+                      <span class="text-xs font-semibold text-smoke">Menu complet</span>
+                      <div class="flex items-baseline gap-1">
+                        <span class="font-display text-3xl font-black text-[#FFC244]">
+                          {dish.priceMad}
+                        </span>
+                        <span class="text-xs font-bold text-cream/70">DH</span>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : category.id === 'accompagnements-sauces' || category.id === 'boissons-milkshakes' ? (
+              /* Compact Grid for Sides, Sauces, Drinks */
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                {category.items.map((dish) => (
+                  <article class="group relative flex items-center justify-between rounded-xl border border-white/5 bg-coal-900/60 p-4 transition-all duration-200 hover:border-white/15 hover:bg-coal-900">
+                    <div class="pr-3">
+                      <h3 class="text-sm font-bold text-cream transition-colors group-hover:text-peri-red">
+                        {dish.name}
+                      </h3>
+                      {dish.description && (
+                        <p class="text-[11px] text-smoke mt-0.5 line-clamp-1">
+                          {dish.description}
+                        </p>
+                      )}
+                    </div>
+                    <div class="shrink-0 flex items-baseline gap-1 font-display text-base font-black text-[#FFC244]">
+                      <span>{dish.priceMad}</span>
+                      <span class="text-[10px] font-sans font-bold text-cream/60">DH</span>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              /* Standard 2-Column Responsive Card Grid (Burgers, Wraps, Tacos, Spécialités, Wings) */
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {category.items.map((dish) => (
+                  <article class="group relative flex flex-col justify-between rounded-2xl border border-white/10 bg-coal-900/80 p-5 transition-all duration-300 hover:border-peri-red/50 hover:bg-coal-900">
+                    <div>
+                      {dish.badge && (
+                        <span class="inline-block rounded-md bg-peri-red/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-peri-red border border-peri-red/30 mb-2">
+                          {dish.badge}
+                        </span>
+                      )}
+                      <h3 class="font-display text-lg uppercase tracking-tight text-cream">
+                        {dish.name}
+                      </h3>
+                      {dish.description && (
+                        <p class="mt-2 text-xs leading-relaxed text-cream/70 line-clamp-2">
+                          {dish.description}
+                        </p>
+                      )}
+                    </div>
+
+                    <div class="mt-5 pt-3 border-t border-white/5 flex items-center justify-between">
+                      {dish.mealPriceMad ? (
+                        <div class="flex items-center gap-3">
+                          <div class="flex flex-col">
+                            <span class="text-[10px] uppercase font-bold text-smoke">Seul</span>
+                            <span class="font-display text-base font-bold text-cream">
+                              {dish.priceMad} <span class="text-[10px] font-sans text-smoke">DH</span>
+                            </span>
+                          </div>
+                          <span class="text-white/20">|</span>
+                          <div class="flex flex-col">
+                            <span class="text-[10px] uppercase font-bold text-peri-red">Menu</span>
+                            <span class="font-display text-base font-black text-[#FFC244]">
+                              {dish.mealPriceMad} <span class="text-[10px] font-sans text-smoke">DH</span>
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div class="flex items-baseline gap-1">
+                          <span class="font-display text-xl font-black text-[#FFC244]">
+                            {dish.priceMad}
+                          </span>
+                          <span class="text-xs font-bold text-cream/70">DH</span>
+                        </div>
+                      )}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </Container>
+        </section>
+      ))}
+    </div>
+
+    {/* ── Branded Glovo Delivery Banner CTA ── */}
+    <section aria-labelledby="glovo-cta-title" class="mt-20 sm:mt-24 lg:mt-28">
+      <Container>
+        <div class="relative overflow-hidden rounded-3xl border border-[#FFC244]/30 bg-gradient-to-br from-coal-900 via-coal-950 to-coal-900 p-8 sm:p-10 lg:p-14 shadow-2xl">
+          {/* Ambient yellow/green glow */}
+          <div
+            aria-hidden="true"
+            class="pointer-events-none absolute right-0 top-0 size-80 rounded-full bg-[#FFC244]/10 blur-3xl"
+          />
+
+          <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div class="max-w-xl">
+              <div class="inline-flex items-center gap-2 rounded-full bg-[#FFC244]/15 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-[#FFC244] border border-[#FFC244]/30">
+                <MdDeliveryDining className="size-4" aria-hidden="true" />
+                <span>Livraison Rapide à Agadir</span>
+              </div>
+
+              <h2 id="glovo-cta-title" class="mt-3 font-display text-3xl uppercase tracking-tight text-cream sm:text-4xl">
+                Envie de savourer chez vous ?
+              </h2>
+
+              <p class="mt-2 text-sm sm:text-base leading-relaxed text-cream/80">
+                Commandez directement sur l'application Glovo et recevez votre poulet braisé chaud et croustillant en quelques minutes.
+              </p>
+            </div>
+
+            <a
+              href={restaurant.links.glovo}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Commander Peri Peri Grill sur Glovo (nouvel onglet)"
+              class="group inline-flex min-h-[52px] items-center justify-center gap-3 rounded-xl bg-[#FFC244] px-7 text-sm font-extrabold uppercase tracking-wider text-[#121f19] shadow-[0_4px_20px_rgba(255,194,68,0.3)] transition-all duration-200 hover:bg-[#ffd166] hover:scale-[1.02] hover:shadow-[0_8px_28px_rgba(255,194,68,0.45)] active:scale-95 shrink-0"
+            >
+              <SiGlovo className="size-5 text-[#00A082]" aria-hidden="true" />
+              <span>Commander sur Glovo</span>
+              <ArrowUpRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+            </a>
+          </div>
+        </div>
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

@@ -80,6 +80,10 @@ export const dishMedia = {
     src: toSrc(feastPlatter),
     alt: 'Large platter of flame-grilled chicken with sides',
   },
+  'duo': {
+    src: toSrc(gallerySharedTable),
+    alt: 'Plateau Duo de poulet braisé aux épices péri-péri avec frites et sauces',
+  },
 } satisfies Record<string, { src: string; alt: string }>
 
 export const galleryMedia = {

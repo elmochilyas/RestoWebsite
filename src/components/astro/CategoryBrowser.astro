@@ -1,0 +1,145 @@
+---
+import { menuCategories } from '../../content';
+
+const categoryLabels: Record<string, string> = {
+  plateaux: 'Plateaux',
+  'poulet-grille': 'Poulet grillé',
+  burgers: 'Burgers',
+  'wraps-pitas': 'Wraps & Pitas',
+  tacos: 'Tacos',
+  specialites: 'Spécialités',
+  'wings-bouchees': 'Wings',
+  'accompagnements-sauces': 'Sides & Sauces',
+  'menus-enfants': 'Menus Enfants',
+  'boissons-milkshakes': 'Boissons',
+};
+---
+
+<nav
+  id="category-nav"
+  aria-label="Browse By Category"
+  class="sticky top-[68px] sm:top-[76px] z-30 border-t-0 border-b border-white/10 bg-coal-950 py-3 sm:py-5 overflow-visible transition-[padding,background-color,box-shadow,border-color] duration-300 [&.is-stuck]:py-2 sm:[&.is-stuck]:py-2.5 [&.is-stuck]:bg-coal-950/98 [&.is-stuck]:backdrop-blur-2xl [&.is-stuck]:shadow-[0_12px_36px_rgba(0,0,0,0.85)] [&.is-stuck]:border-white/15"
+>
+  <div class="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 overflow-visible">
+    {/* Options Container: Full 5x2 / centered row at top, becomes compact horizontal strip when stuck */}
+    <div
+      id="category-options-track"
+      class="grid grid-cols-5 xl:flex xl:flex-nowrap xl:justify-center items-start gap-2.5 sm:gap-4 md:gap-5 xl:gap-3.5 overflow-visible pt-0.5 pb-0.5 transition-all duration-300 [nav.is-stuck_&]:flex [nav.is-stuck_&]:flex-nowrap [nav.is-stuck_&]:justify-start xl:[nav.is-stuck_&]:justify-center [nav.is-stuck_&]:overflow-x-auto [nav.is-stuck_&]:scrollbar-none [nav.is-stuck_&]:gap-2 sm:[nav.is-stuck_&]:gap-3 [nav.is-stuck_&]:py-1"
+    >
+      {menuCategories.map((category) => {
+        const label = categoryLabels[category.id] ?? category.name;
+        return (
+          <a
+            href={`#${category.id}`}
+            data-category-id={category.id}
+            class="category-link group relative flex flex-col items-center gap-1.5 shrink-0 transition-all duration-300 active:scale-95 text-center w-full xl:w-[96px] [nav.is-stuck_&]:w-auto [nav.is-stuck_&]:min-w-[70px] sm:[nav.is-stuck_&]:min-w-[80px] md:[nav.is-stuck_&]:min-w-[86px] [nav.is-stuck_&]:px-1 overflow-visible"
+            aria-label={`Aller à la catégorie ${category.name}`}
+          >
+            {/* Circular Medallion: Full size in rest mode, elegant 56px-64px in stuck mode */}
+            <div
+              class="category-badge relative flex size-15 sm:size-18 md:size-20 xl:size-22 items-center justify-center rounded-full transition-all duration-300 ease-out group-hover:scale-110 group-hover:-translate-y-1 overflow-visible [nav.is-stuck_&]:size-14 sm:[nav.is-stuck_&]:size-15 md:[nav.is-stuck_&]:size-16"
+            >
+              <img
+                src={`/categories/${category.id}.png`}
+                alt=""
+                width="88"
+                height="88"
+                loading="eager"
+                decoding="async"
+                class="size-full object-contain filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.7)] transition-all duration-300 group-hover:drop-shadow-[0_8px_20px_rgba(231,55,31,0.65)]"
+              />
+            </div>
+
+            {/* Category Label Below Circle: readable text */}
+            <span
+              class="category-label text-[11px] sm:text-xs md:text-[13px] xl:text-sm font-semibold tracking-tight text-cream/90 transition-all duration-300 group-hover:text-mustard leading-tight text-center break-words w-full select-none [nav.is-stuck_&]:text-[11px] sm:[nav.is-stuck_&]:text-xs [nav.is-stuck_&]:max-w-[76px] sm:[nav.is-stuck_&]:max-w-[86px] [nav.is-stuck_&]:truncate"
+            >
+              {label}
+            </span>
+          </a>
+        );
+      })}
+    </div>
+  </div>
+</nav>
+
+<script>
+  function setupStickyCategoryNav() {
+    const nav = document.getElementById('category-nav');
+    const sentinel = document.getElementById('category-sentinel');
+    if (!nav || !sentinel) return;
+
+    const navElement = nav;
+    const sentinelElement = sentinel;
+
+    function updateStickyState() {
+      const sentinelRect = sentinelElement.getBoundingClientRect();
+      const threshold = window.innerWidth < 640 ? 68 : 76;
+      // When sentinel moves above header bottom, nav is stuck
+      const isStuck = sentinelRect.top <= threshold;
+      navElement.classList.toggle('is-stuck', isStuck);
+    }
+
+    window.addEventListener('scroll', updateStickyState, { passive: true });
+    window.addEventListener('resize', updateStickyState, { passive: true });
+    updateStickyState();
+
+    // ScrollSpy to highlight active category in sticky bar
+    const links = navElement.querySelectorAll<HTMLAnchorElement>('.category-link');
+    const sections = Array.from(links).map((link) => {
+      const id = link.getAttribute('data-category-id');
+      return id ? document.getElementById(id) : null;
+    }).filter(Boolean) as HTMLElement[];
+
+    function updateActiveCategory() {
+      const scrollY = window.scrollY;
+      const offset = 180; // header + sticky bar height
+      let activeId = '';
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const sec = sections[i];
+        if (sec.offsetTop - offset <= scrollY) {
+          activeId = sec.id;
+          break;
+        }
+      }
+
+      links.forEach((link) => {
+        const id = link.getAttribute('data-category-id');
+        const isActive = id === activeId;
+        const badge = link.querySelector('.category-badge');
+        const label = link.querySelector('.category-label');
+        if (badge && label) {
+          if (isActive && navElement.classList.contains('is-stuck')) {
+            badge.classList.add('ring-2', 'ring-peri-red', 'scale-105');
+            label.classList.add('text-mustard');
+            label.classList.remove('text-cream/90');
+
+            // Gently auto-scroll active category into view horizontally if track is scrollable
+            const track = document.getElementById('category-options-track');
+            if (track && track.scrollWidth > track.clientWidth) {
+              const linkLeft = link.offsetLeft;
+              const linkWidth = link.offsetWidth;
+              const trackScroll = track.scrollLeft;
+              const trackWidth = track.clientWidth;
+              if (linkLeft < trackScroll + 20 || linkLeft + linkWidth > trackScroll + trackWidth - 20) {
+                track.scrollTo({ left: linkLeft - trackWidth / 2 + linkWidth / 2, behavior: 'smooth' });
+              }
+            }
+          } else {
+            badge.classList.remove('ring-2', 'ring-peri-red', 'scale-105');
+            label.classList.remove('text-mustard');
+            label.classList.add('text-cream/90');
+          }
+        }
+      });
+    }
+
+    window.addEventListener('scroll', updateActiveCategory, { passive: true });
+    updateActiveCategory();
+  }
+
+  // Run on page load and view transitions
+  setupStickyCategoryNav();
+  document.addEventListener('astro:page-load', setupStickyCategoryNav);
+</script>

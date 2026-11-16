@@ -1,0 +1,25 @@
+---
+export interface Props {
+  count: 1 | 2 | 3 | 4;
+  size?: number | string;
+  class?: string;
+  className?: string;
+}
+
+const { count, size = 52, class: classProp = '', className = '' } = Astro.props;
+const combinedClass = classProp || className;
+const dimension = typeof size === 'number' ? `${size}px` : size;
+const name = `${count} ${count === 1 ? 'personne' : 'personnes'}`;
+---
+
+<img
+  src={`/portion-stickers/${count}.png`}
+  width="1254"
+  height="1254"
+  alt={name}
+  loading="lazy"
+  decoding="async"
+  draggable="false"
+  class={`inline-block shrink-0 select-none drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:scale-105 ${combinedClass}`}
+  style={`width: ${dimension}; height: ${dimension}; object-fit: contain;`}
+/>

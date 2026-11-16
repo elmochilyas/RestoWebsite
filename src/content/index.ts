@@ -1,6 +1,7 @@
 export { restaurant } from './restaurant'
-export { menuItems } from './menu'
+export { menuCategories, menuItems, featuredDishes, homepageFeaturedDishIds } from './menu'
 export { heatLevels, heatSection } from './heatLevels'
+export { flavorItems, flavorShowcaseSection } from './flavors'
 export { storyContent } from './story'
 export { reviews, reviewsSection } from './reviews'
 export { gallery, gallerySection } from './gallery'
