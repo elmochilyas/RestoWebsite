@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bbqGlow" cx="50%" cy="55%" r="48%">
+      <stop offset="0%" stop-color="#b45309" stop-opacity="0.45"/>
+      <stop offset="65%" stop-color="#78350f" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#451a03" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ramekinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#382014"/>
+      <stop offset="40%" stop-color="#24140b"/>
+      <stop offset="100%" stop-color="#140a05"/>
+    </linearGradient>
+    <linearGradient id="sauceGlossy" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="25%" stop-color="#b45309"/>
+      <stop offset="60%" stop-color="#78350f"/>
+      <stop offset="100%" stop-color="#3c1303"/>
+    </linearGradient>
+    <linearGradient id="sauceHighlight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8"/>
+      <stop offset="45%" stop-color="#ffffff" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="brushWood" x1="0%" y1="0%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#d7a15c"/>
+      <stop offset="50%" stop-color="#9a652c"/>
+      <stop offset="100%" stop-color="#54320e"/>
+    </linearGradient>
+    <filter id="bbqShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="15" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+
+  <circle cx="256" cy="270" r="210" fill="url(#bbqGlow)" />
+
+  <!-- Woodsmoke Wisps -->
+  <g stroke="#ffffff" stroke-linecap="round" fill="none" opacity="0.3">
+    <path d="M210 170 C190 120 225 90 205 50" stroke-width="5"/>
+    <path d="M265 155 C290 110 260 80 280 40" stroke-width="6"/>
+    <path d="M315 175 C335 130 315 95 335 60" stroke-width="4.5"/>
+  </g>
+
+  <g filter="url(#bbqShadow)">
+    <!-- Rustic Ceramic Ramekin / Glaze Dish -->
+    <ellipse cx="256" cy="330" rx="145" ry="90" fill="url(#ramekinGrad)" stroke="#522b17" stroke-width="3"/>
+    <!-- Inner Sauce Well -->
+    <ellipse cx="256" cy="325" rx="130" ry="75" fill="url(#sauceGlossy)" />
+
+    <!-- Rich Viscous BBQ Sauce Swirls -->
+    <path d="M160 320 C180 270 270 265 330 295 C370 315 365 350 320 370 C260 395 180 375 160 320 Z" fill="#2d0c02" opacity="0.6"/>
+    <path d="M185 315 C215 280 285 280 335 305 C365 320 360 345 325 360 C275 380 200 360 185 315 Z" fill="url(#sauceGlossy)" />
+
+    <!-- Mirror-Gloss Reflection on Sauce Surface -->
+    <path d="M180 290 C220 265 295 265 345 285 C320 275 250 275 195 298 Z" fill="url(#sauceHighlight)" />
+    <ellipse cx="295" cy="335" rx="28" ry="12" fill="#ffffff" opacity="0.25" transform="rotate(-10 295 335)"/>
+
+    <!-- Thick Sauce Drip on Rim -->
+    <path d="M340 370 C345 395 352 415 358 415 C365 415 362 390 358 370 Z" fill="#541b05" />
+
+    <!-- Wooden Baste Grill Brush Poised Angled Dipping -->
+    <g transform="translate(245, 120) rotate(35)">
+      <!-- Wood Handle -->
+      <path d="M-14 0 C-14 -70 -10 -110 -12 -135 C-12 -140 12 -140 12 -135 C10 -110 14 -70 14 0 Z" fill="url(#brushWood)" />
+      <!-- Metal Band -->
+      <rect x="-20" y="0" width="40" height="28" rx="2" fill="#9ca3af" stroke="#4b5563" stroke-width="2"/>
+      <!-- Bristles Loaded with Dark BBQ Glaze -->
+      <path d="M-20 28 L-24 85 C-8 100 8 100 24 85 L20 28 Z" fill="#451a03" />
+      <path d="M-15 45 L-18 88 C-6 98 6 98 18 88 L15 45 Z" fill="#b45309" opacity="0.6"/>
+      <!-- Drip on brush tip -->
+      <path d="M-10 88 C0 115 6 115 10 88 Z" fill="#78350f" />
+    </g>
+
+    <!-- Cracked Black Peppercorns -->
+    <g fill="#171717" stroke="#451a03" stroke-width="1.5">
+      <polygon points="190,360 197,356 201,363 195,368 188,365" />
+      <polygon points="325,365 333,362 337,370 330,375 323,371" />
+      <polygon points="260,380 266,377 270,383 264,388 258,385" />
+    </g>
+  </g>
+</svg>

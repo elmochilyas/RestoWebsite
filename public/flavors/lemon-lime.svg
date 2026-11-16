@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="llGlow" cx="50%" cy="55%" r="48%">
+      <stop offset="0%" stop-color="#84cc16" stop-opacity="0.45"/>
+      <stop offset="65%" stop-color="#4d7c0f" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#1e3a05" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="limeRind" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#bef264"/>
+      <stop offset="40%" stop-color="#65a30d"/>
+      <stop offset="100%" stop-color="#365314"/>
+    </linearGradient>
+    <linearGradient id="limePulp" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d9f99d"/>
+      <stop offset="50%" stop-color="#a3e635"/>
+      <stop offset="100%" stop-color="#4d7c0f"/>
+    </linearGradient>
+    <linearGradient id="lemonRind" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="50%" stop-color="#eab308"/>
+      <stop offset="100%" stop-color="#854d0e"/>
+    </linearGradient>
+    <linearGradient id="lemonPulp" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef9c3"/>
+      <stop offset="50%" stop-color="#facc15"/>
+      <stop offset="100%" stop-color="#ca8a04"/>
+    </linearGradient>
+    <filter id="llShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="15" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <circle cx="256" cy="270" r="210" fill="url(#llGlow)" />
+
+  <g filter="url(#llShadow)">
+    <!-- Yellow Lemon Half in Background -->
+    <g transform="translate(290, 240) rotate(25)">
+      <ellipse cx="0" cy="0" rx="95" ry="90" fill="url(#lemonRind)" />
+      <ellipse cx="0" cy="0" rx="84" ry="79" fill="#fef9c3" />
+      <ellipse cx="0" cy="0" rx="78" ry="73" fill="url(#lemonPulp)" />
+      <g stroke="#fef9c3" stroke-width="3" fill="none">
+        <line x1="0" y1="-73" x2="0" y2="73"/>
+        <line x1="-78" y1="0" x2="78" y2="0"/>
+        <line x1="-55" y1="-51" x2="55" y2="51"/>
+        <line x1="-55" y1="51" x2="55" y2="-51"/>
+      </g>
+      <circle cx="0" cy="0" r="10" fill="#fef9c3" />
+    </g>
+
+    <!-- Vibrant Green Lime Wheel in Foreground -->
+    <g transform="translate(200, 300) rotate(-15)">
+      <circle cx="0" cy="0" r="110" fill="url(#limeRind)" />
+      <circle cx="0" cy="0" r="98" fill="#ecfccb" />
+      <circle cx="0" cy="0" r="90" fill="url(#limePulp)" />
+
+      <g stroke="#ecfccb" stroke-width="4" fill="none">
+        <line x1="0" y1="-90" x2="0" y2="90"/>
+        <line x1="-90" y1="0" x2="90" y2="0"/>
+        <line x1="-63" y1="-63" x2="63" y2="63"/>
+        <line x1="-63" y1="63" x2="63" y2="-63"/>
+      </g>
+      <circle cx="0" cy="0" r="12" fill="#ecfccb" />
+      <circle cx="35" cy="35" r="3.5" fill="#ffffff" opacity="0.8"/>
+      <circle cx="-40" cy="25" r="3" fill="#ffffff" opacity="0.8"/>
+      <circle cx="20" cy="-50" r="4" fill="#ffffff" opacity="0.8"/>
+      <path d="M-80 -40 C-30 -85 40 -85 80 -40 C50 -70 -20 -70 -80 -40 Z" fill="#ffffff" opacity="0.6"/>
+    </g>
+
+    <!-- Fresh Citrus Leaves on Top -->
+    <g transform="translate(210, 150) rotate(-35)">
+      <path d="M0 0 C30 -40 85 -35 110 5 C85 35 30 40 0 0 Z" fill="#365314" />
+      <path d="M0 0 C25 -30 75 -25 95 5 C75 25 25 30 0 0 Z" fill="#4d7c0f" />
+      <path d="M0 0 Q55 -10 95 5" stroke="#84cc16" stroke-width="2.5" fill="none"/>
+      <path d="M30 -5 Q40 -18 55 -20" stroke="#84cc16" stroke-width="1.5" fill="none"/>
+      <path d="M50 -2 Q65 -15 80 -15" stroke="#84cc16" stroke-width="1.5" fill="none"/>
+      <path d="M35 5 Q50 18 65 18" stroke="#84cc16" stroke-width="1.5" fill="none"/>
+    </g>
+  </g>
+
+  <!-- Clear Fresh Splashing Juice Droplets -->
+  <g fill="#a3e635" opacity="0.9">
+    <ellipse cx="370" cy="180" rx="5" ry="8" transform="rotate(35 370 180)" fill="#bef264"/>
+    <ellipse cx="110" cy="280" rx="4.5" ry="7" transform="rotate(-40 110 280)" fill="#d9f99d"/>
+    <circle cx="340" cy="380" r="5" fill="#facc15" />
+    <circle cx="150" cy="420" r="4" fill="#bef264" />
+    <circle cx="300" cy="130" r="3" fill="#ffffff" />
+  </g>
+</svg>
