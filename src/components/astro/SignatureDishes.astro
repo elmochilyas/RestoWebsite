@@ -1,95 +1,294 @@
 ---
-import { ArrowRight } from 'lucide-react';
-import { menuItems } from '../../content';
-import type { MenuItem } from '../../types/content';
+import { ArrowRight, Flame, Sparkles } from 'lucide-react';
+import { featuredDishes } from '../../content';
 import Container from '../ui/Container.astro';
-import Eyebrow from '../ui/Eyebrow.astro';
+import PortionSticker from '../ui/PortionSticker.astro';
 
-const dishOrder = [
-  'mega-feast',
-  'flamin-wings',
-  'chicken-and-rice',
-  'the-wrapster',
-] as const;
-
-const layout: Record<string, { card: string; title: string }> = {
-  'mega-feast': {
-    card: 'col-span-2 aspect-[4/3] lg:col-span-7 lg:aspect-[4/3]',
-    title: 'text-2xl sm:text-3xl lg:text-4xl',
-  },
-  'flamin-wings': {
-    card: 'aspect-[3/4] lg:aspect-auto lg:col-span-5',
-    title: 'text-lg sm:text-xl lg:text-3xl',
-  },
-  'chicken-and-rice': {
-    card: 'aspect-[3/4] lg:col-span-4 lg:aspect-[4/5]',
-    title: 'text-lg sm:text-xl lg:text-3xl',
-  },
-  'the-wrapster': {
-    card: 'col-span-2 aspect-[4/3] lg:aspect-auto lg:col-span-8',
-    title: 'text-2xl sm:text-3xl lg:text-4xl',
-  },
-};
-
-const featured = dishOrder
-  .map((id) => menuItems.find((item) => item.id === id))
-  .filter((item): item is MenuItem => Boolean(item?.image && item.imageAlt));
+// Ensure our 4 featured dishes are in exact requested order
+const megaFeast = featuredDishes.find((d) => d.id === 'mega-feast')!;
+const duo = featuredDishes.find((d) => d.id === 'duo')!;
+const chickenRice = featuredDishes.find((d) => d.id === 'chicken-and-rice')!;
+const theWrapster = featuredDishes.find((d) => d.id === 'the-wrapster')!;
 ---
 
 <section
-  id="menu"
-  class="scroll-mt-24 bg-cream py-20 text-ink sm:py-24 lg:py-32"
+  id="incontournables"
+  aria-label="Nos incontournables grillades"
+  class="relative overflow-hidden bg-coal-950 py-14 sm:py-16 lg:py-20 text-cream border-t border-white/5"
 >
+  {/* Ambient ember glow behind the showcase */}
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 size-[600px] rounded-full bg-radial from-peri-red/10 via-ember/5 to-transparent blur-3xl"
+  />
+
   <Container>
-    <header class="mb-10 sm:mb-14 lg:mb-16 lg:flex lg:items-end lg:justify-between lg:gap-8">
+    {/* Editorial Header with Bespoke CTA */}
+    <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6 lg:mb-10">
       <div>
-        <Eyebrow tone="light">Signature dishes</Eyebrow>
-        <h2 class="mt-4 font-display text-h2 uppercase text-ink sm:mt-6">
-          Made for
-          <span class="block text-peri-red">The flame.</span>
+        <div class="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-peri-red">
+          <Flame className="size-4 text-peri-red animate-pulse" aria-hidden="true" />
+          <span>Nos Incontournables</span>
+        </div>
+        <h2 class="mt-2 font-display text-3xl uppercase tracking-tight text-cream sm:text-4xl lg:text-5xl">
+          Le Goût <span class="text-peri-red">du Grill.</span>
         </h2>
       </div>
+
       <a
-        href="#menu"
-        class="group mt-6 inline-flex items-center gap-2 text-base font-bold text-ink underline-offset-4 hover:underline lg:mt-0"
+        href="/menu"
+        class="group inline-flex items-center gap-2 self-start rounded-full border border-peri-red/30 bg-coal-900/80 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-cream backdrop-blur-md transition-all duration-300 hover:border-peri-red hover:bg-peri-red hover:text-cream hover:shadow-[0_4px_20px_rgba(231,55,31,0.4)] sm:self-end"
       >
-        View the menu
+        <span>Découvrir toute la carte</span>
         <ArrowRight
+          className="size-4 transition-transform duration-200 group-hover:translate-x-1"
           aria-hidden="true"
-          className="size-5 transition-transform duration-200 group-hover:translate-x-1"
         />
       </a>
-    </header>
+    </div>
 
-    <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-12 lg:gap-6">
-      {featured.map((dish) => {
-        const item = layout[dish.id];
-        return (
+    {/* ── Desktop Editorial Showcase (Asymmetric Food Magazine Grid) ── */}
+    <div class="hidden lg:grid lg:grid-cols-12 lg:gap-5 lg:h-[500px]">
+      {/* 1. Large Hero Dish: Mega Feast (Left 6 Columns) */}
+      <article
+        class="group relative col-span-6 h-full overflow-hidden rounded-2xl border border-white/10 bg-coal-900 transition-all duration-300 hover:border-peri-red/50 hover:shadow-[0_12px_36px_rgba(0,0,0,0.6)]"
+      >
+        {megaFeast.image ? (
+          <img
+            src={megaFeast.image}
+            alt={megaFeast.imageAlt ?? megaFeast.name}
+            loading="lazy"
+            decoding="async"
+            class="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+          />
+        ) : (
+          <div class="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-coal-900 via-coal-950 to-coal-900">
+            <Flame className="size-20 text-cream/10" aria-hidden="true" />
+          </div>
+        )}
+
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 bg-gradient-to-t from-coal-950 via-coal-950/40 to-transparent"
+        />
+
+        {/* Top Badges */}
+        <div class="absolute inset-x-0 top-0 flex items-center justify-between p-5 z-10">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-peri-red/90 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-cream shadow-sm">
+            <Sparkles className="size-3 text-cream" aria-hidden="true" />
+            Festin Signature
+          </span>
+          {megaFeast.portionCount ? (
+            <PortionSticker count={megaFeast.portionCount} size={58} class="hover:scale-110 transition-transform duration-300 drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]" />
+          ) : megaFeast.serves ? (
+            <span class="rounded-full border border-white/20 bg-coal-950/70 px-2.5 py-0.5 text-[11px] font-semibold tracking-wider text-cream/90 backdrop-blur-md">
+              {megaFeast.serves}
+            </span>
+          ) : null}
+        </div>
+
+        {/* Bottom Details */}
+        <div class="absolute inset-x-0 bottom-0 p-6">
+          <p class="text-xs font-bold uppercase tracking-widest text-peri-red">
+            {megaFeast.category}
+          </p>
+          <div class="mt-1 flex items-baseline justify-between gap-4">
+            <h3 class="font-display text-2xl uppercase tracking-tight text-cream sm:text-3xl">
+              {megaFeast.name}
+            </h3>
+            <span class="font-display text-2xl font-black text-[#FFC244]">
+              {megaFeast.priceMad} <span class="text-sm font-sans font-bold text-cream/70">DH</span>
+            </span>
+          </div>
+          {megaFeast.description && (
+            <p class="mt-2 text-xs leading-relaxed text-cream/80 line-clamp-2 max-w-md">
+              {megaFeast.description}
+            </p>
+          )}
+        </div>
+      </article>
+
+      {/* Right 6 Columns: 2 Supporting + 1 Wider */}
+      <div class="col-span-6 flex flex-col gap-5 h-full">
+        {/* Row 1: Two Smaller Supporting Cards */}
+        <div class="grid grid-cols-2 gap-5 h-[235px]">
+          {/* Duo */}
           <article
-            class={`group relative overflow-hidden rounded-[20px] bg-coal-900 h-full ${item?.card ?? ''}`}
+            class="group relative h-full overflow-hidden rounded-2xl border border-white/10 bg-coal-900 transition-all duration-300 hover:border-peri-red/50 hover:shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
           >
-            <img
-              src={dish.image}
-              alt={dish.imageAlt ?? ''}
-              loading="lazy"
-              decoding="async"
-              class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-            />
+            {duo.image ? (
+              <img
+                src={duo.image}
+                alt={duo.imageAlt ?? duo.name}
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+            ) : (
+              <div class="absolute inset-0 flex items-center justify-center bg-coal-900">
+                <Flame className="size-12 text-cream/10" aria-hidden="true" />
+              </div>
+            )}
             <div
               aria-hidden="true"
-              class="absolute inset-0 bg-linear-to-t from-coal-950/90 via-coal-950/35 to-transparent"
+              class="absolute inset-0 bg-gradient-to-t from-coal-950 via-coal-950/50 to-transparent"
             />
-            <div class="absolute inset-x-0 bottom-0 p-4 sm:p-5 lg:p-6">
-              {dish.category && (
-                <p class="text-eyebrow uppercase text-cream/70">{dish.category}</p>
-              )}
-              <h3 class={`mt-1 font-display uppercase text-cream ${item?.title ?? ''}`}>
-                {dish.name}
-              </h3>
+            {duo.portionCount ? (
+              <div class="absolute top-3 right-3 z-10">
+                <PortionSticker count={duo.portionCount} size={46} class="hover:scale-110 transition-transform duration-300 drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]" />
+              </div>
+            ) : duo.serves ? (
+              <span class="absolute top-3 right-3 rounded-full border border-white/15 bg-coal-950/70 px-2 py-0.5 text-[10px] font-semibold text-cream/90 backdrop-blur-md">
+                {duo.serves}
+              </span>
+            ) : null}
+            <div class="absolute inset-x-0 bottom-0 p-4">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-peri-red">
+                {duo.category}
+              </p>
+              <div class="mt-0.5 flex items-baseline justify-between gap-2">
+                <h3 class="font-display text-lg uppercase tracking-tight text-cream">
+                  {duo.name}
+                </h3>
+                <span class="font-display text-base font-black text-[#FFC244]">
+                  {duo.priceMad} <span class="text-xs font-sans font-bold text-cream/70">DH</span>
+                </span>
+              </div>
             </div>
           </article>
-        );
-      })}
+
+          {/* Chicken & Rice */}
+          <article
+            class="group relative h-full overflow-hidden rounded-2xl border border-white/10 bg-coal-900 transition-all duration-300 hover:border-peri-red/50 hover:shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
+          >
+            {chickenRice.image ? (
+              <img
+                src={chickenRice.image}
+                alt={chickenRice.imageAlt ?? chickenRice.name}
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+            ) : (
+              <div class="absolute inset-0 flex items-center justify-center bg-coal-900">
+                <Flame className="size-12 text-cream/10" aria-hidden="true" />
+              </div>
+            )}
+            <div
+              aria-hidden="true"
+              class="absolute inset-0 bg-gradient-to-t from-coal-950 via-coal-950/50 to-transparent"
+            />
+            <div class="absolute inset-x-0 bottom-0 p-4">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-peri-red">
+                {chickenRice.category}
+              </p>
+              <div class="mt-0.5 flex items-baseline justify-between gap-2">
+                <h3 class="font-display text-lg uppercase tracking-tight text-cream">
+                  {chickenRice.name}
+                </h3>
+                <span class="font-display text-base font-black text-[#FFC244]">
+                  {chickenRice.priceMad} <span class="text-xs font-sans font-bold text-cream/70">DH</span>
+                </span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        {/* Row 2: Wider Supporting Dish: The Wrapster */}
+        <article
+          class="group relative h-[245px] overflow-hidden rounded-2xl border border-white/10 bg-coal-900 transition-all duration-300 hover:border-peri-red/50 hover:shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
+        >
+          {theWrapster.image ? (
+            <img
+              src={theWrapster.image}
+              alt={theWrapster.imageAlt ?? theWrapster.name}
+              loading="lazy"
+              decoding="async"
+              class="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+          ) : (
+            <div class="absolute inset-0 flex items-center justify-center bg-coal-900">
+              <Flame className="size-16 text-cream/10" aria-hidden="true" />
+            </div>
+          )}
+          <div
+            aria-hidden="true"
+            class="absolute inset-0 bg-gradient-to-r from-coal-950 via-coal-950/80 via-40% to-transparent"
+          />
+          <div class="relative z-10 flex h-full flex-col justify-end p-5 max-w-sm">
+            <p class="text-xs font-bold uppercase tracking-widest text-peri-red">
+              {theWrapster.category}
+            </p>
+            <div class="mt-1 flex items-baseline justify-between gap-4">
+              <h3 class="font-display text-2xl uppercase tracking-tight text-cream">
+                {theWrapster.name}
+              </h3>
+              <div class="flex items-center gap-1.5 font-display text-lg font-black text-[#FFC244]">
+                <span>{theWrapster.priceMad}</span>
+                <span class="text-xs font-sans font-bold text-cream/60">/ {theWrapster.mealPriceMad} DH</span>
+              </div>
+            </div>
+            {theWrapster.description && (
+              <p class="mt-1 text-xs leading-relaxed text-cream/80 line-clamp-1">
+                {theWrapster.description}
+              </p>
+            )}
+          </div>
+        </article>
+      </div>
+    </div>
+
+    {/* ── Mobile Compact Horizontal Swipe Track (Clean, zero vertical bloat) ── */}
+    <div class="lg:hidden">
+      <div class="-mx-4 flex gap-4 overflow-x-auto px-4 pb-4 pt-1 snap-x snap-mandatory scrollbar-none sm:-mx-6 sm:px-6">
+        {[megaFeast, duo, theWrapster, chickenRice].map((dish) => (
+          <article
+            class="relative flex-none w-[270px] sm:w-[320px] snap-center overflow-hidden rounded-2xl border border-white/10 bg-coal-900 shadow-md"
+          >
+            <div class="aspect-[4/3] w-full overflow-hidden relative">
+              {dish.image ? (
+                <img
+                  src={dish.image}
+                  alt={dish.imageAlt ?? dish.name}
+                  loading="lazy"
+                  decoding="async"
+                  class="h-full w-full object-cover"
+                />
+              ) : (
+                <div class="h-full w-full flex items-center justify-center bg-coal-900">
+                  <Flame className="size-12 text-cream/10" aria-hidden="true" />
+                </div>
+              )}
+              <div
+                aria-hidden="true"
+                class="absolute inset-0 bg-gradient-to-t from-coal-950 via-coal-950/40 to-transparent"
+              />
+              {dish.portionCount ? (
+                <div class="absolute top-2.5 right-2.5 z-10">
+                  <PortionSticker count={dish.portionCount} size={42} />
+                </div>
+              ) : dish.serves ? (
+                <span class="absolute top-3 right-3 rounded-full border border-white/15 bg-coal-950/80 px-2.5 py-0.5 text-[10px] font-semibold text-cream">
+                  {dish.serves}
+                </span>
+              ) : null}
+            </div>
+            <div class="p-4 bg-coal-950/90">
+              <p class="text-[10px] font-bold uppercase tracking-wider text-peri-red">
+                {dish.category}
+              </p>
+              <div class="mt-1 flex items-baseline justify-between gap-2">
+                <h3 class="font-display text-base uppercase text-cream truncate">
+                  {dish.name}
+                </h3>
+                <span class="font-display text-base font-black text-[#FFC244] shrink-0">
+                  {dish.priceMad} <span class="text-[10px] font-sans font-bold text-cream/70">DH</span>
+                </span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
   </Container>
 </section>

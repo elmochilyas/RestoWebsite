@@ -1,183 +1,186 @@
 ---
-import { Moon } from 'lucide-react';
+import { ArrowUpRight, Clock3, MapPin, Moon, Navigation, Phone } from 'lucide-react';
+import { SiWhatsapp } from 'react-icons/si';
 import { restaurant } from '../../content';
 import type { DayName } from '../../types/content';
-import Button from '../ui/Button.astro';
 import Container from '../ui/Container.astro';
 import Eyebrow from '../ui/Eyebrow.astro';
 
-const DAY_LABELS: Record<DayName, string> = {
-  monday: 'Mon',
-  tuesday: 'Tue',
-  wednesday: 'Wed',
-  thursday: 'Thu',
-  friday: 'Fri',
-  saturday: 'Sat',
-  sunday: 'Sun',
+const dayLabels: Record<DayName, string> = {
+  monday: 'Lundi', tuesday: 'Mardi', wednesday: 'Mercredi', thursday: 'Jeudi',
+  friday: 'Vendredi', saturday: 'Samedi', sunday: 'Dimanche',
 };
-
-const DAY_LABELS_FULL: Record<DayName, string> = {
-  monday: 'Monday',
-  tuesday: 'Tuesday',
-  wednesday: 'Wednesday',
-  thursday: 'Thursday',
-  friday: 'Friday',
-  saturday: 'Saturday',
-  sunday: 'Sunday',
-};
-
-function toMinutes(time: string) {
-  const [hours, minutes] = time.split(':').map(Number);
-  return hours * 60 + (minutes ?? 0);
-}
-
 const hours = restaurant.publicInfo.hours;
 const anyClosesNextDay = hours.some((day) => day.closesNextDay);
-const allCloseSame =
-  hours.length > 0 &&
-  hours.every(
-    (day) =>
-      day.close === hours[0].close &&
-      (day.closesNextDay ?? false) === (hours[0].closesNextDay ?? false),
-  );
-const canShowLateHeadline = allCloseSame && anyClosesNextDay;
-const earliestOpenMinutes = Math.min(...hours.map((day) => toMinutes(day.open)));
-const earliestOpen =
-  hours.find((day) => toMinutes(day.open) === earliestOpenMinutes)?.open ??
-  hours[0]?.open ??
-  '—';
-const laterDays = hours.filter((day) => toMinutes(day.open) > earliestOpenMinutes);
-const lateSummary = laterDays
-  .map((day) => `${DAY_LABELS_FULL[day.day]} from ${day.open}`)
-  .join(' · ');
-const addressLines = restaurant.address.split(',').map((part) => part.trim());
+const commonLateClose = hours.length > 0 && hours.every(
+  (day) => day.closesNextDay && day.close === hours[0].close,
+) ? hours[0].close : null;
+const earliestOpen = [...hours].map((day) => day.open).sort()[0];
+const laterDays = hours.filter((day) => day.open > earliestOpen);
 const mapQuery = `${restaurant.name} - ${restaurant.locationName}, ${restaurant.address}`;
 const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=16&output=embed`;
 ---
 
-<section
-  id="visit"
-  class="scroll-mt-24 bg-coal-950 py-20 text-cream sm:py-24 lg:py-32"
->
+<section id="visit" aria-labelledby="visit-title" class="visit-section scroll-mt-24 bg-coal-950 py-16 text-cream sm:py-20 lg:py-24">
   <Container>
-    <div class="lg:grid lg:grid-cols-12 lg:gap-x-10 xl:gap-x-14">
-      <div class="lg:col-span-5">
-        <header>
-          <Eyebrow>Visit us</Eyebrow>
-          <h2 class="mt-4 font-display text-h2 uppercase text-cream sm:mt-6">
-            Find us in
-            <span class="block text-peri-red">
-              {restaurant.locationName}.
-            </span>
-          </h2>
-        </header>
-
-        <div class="mt-10 md:grid md:grid-cols-2 md:gap-x-10 lg:mt-14 lg:block">
-          <address class="not-italic">
-            <p class="font-display text-[clamp(1.5rem,3vw,2rem)] uppercase leading-none tracking-[-0.02em] text-cream">
-              {restaurant.locationName}
-            </p>
-            <p class="mt-4 font-editorial text-[clamp(1.3125rem,2.5vw,1.5625rem)] font-[450] leading-[1.45] tracking-[-0.01em] text-cream/85">
-              {addressLines.map((line) => (
-                <span class="block">{line}</span>
-              ))}
-            </p>
-          </address>
-
-          <div class="mt-8 md:mt-0 lg:mt-10">
-            <Button
-              href={restaurant.links.maps}
-              target="_blank"
-              rel="noopener noreferrer"
-              withArrow
-              class="w-full sm:w-auto"
-            >
-              Directions
-            </Button>
-
-            <div class="mt-8 lg:mt-10">
-              <p class="text-xs font-bold uppercase tracking-[0.16em] text-smoke">
-                Phone
-              </p>
-              <a
-                href={restaurant.phoneHref}
-                class="mt-2 inline-flex min-h-11 items-center text-xl font-bold tracking-[-0.01em] text-cream underline decoration-peri-red decoration-2 underline-offset-4 transition-colors hover:text-ember sm:text-2xl"
-              >
-                {restaurant.phoneDisplay}
-              </a>
-            </div>
-          </div>
-        </div>
+    <header class="grid gap-5 lg:grid-cols-[1.4fr_1fr] lg:items-end lg:gap-16">
+      <div>
+        <Eyebrow>Nous rendre visite</Eyebrow>
+        <h2 id="visit-title" class="mt-4 font-display text-[clamp(2rem,4.8vw,4.5rem)] leading-[1.05] tracking-[-0.025em] uppercase">
+          Rendez-vous à
+          <span class="block text-peri-red">{restaurant.locationName}.</span>
+        </h2>
       </div>
+      <p class="max-w-sm text-base leading-relaxed text-cream/75 lg:pb-1 lg:text-lg">
+        Une pause déjeuner, un dîner entre amis ou une envie de grillades en fin de soirée. La flamme vous attend.
+      </p>
+    </header>
 
-      <div class="mt-12 lg:col-span-7 lg:col-start-6 lg:mt-0">
-        <div class="h-[300px] overflow-hidden rounded-[20px] bg-coal-900 sm:h-[340px] md:h-[400px] lg:h-[480px]">
-          <iframe
-            src={mapEmbedUrl}
-            title={`Map showing ${restaurant.name} in ${restaurant.locationName}, ${restaurant.city}`}
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            allowfullscreen
-            class="h-full w-full border-0"
-          />
+    <div class="mt-9 grid gap-6 sm:mt-12 lg:grid-cols-[0.85fr_1.4fr] lg:gap-10">
+      <div class="flex flex-col justify-center py-1 lg:py-4">
+        <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-smoke">
+          <MapPin className="size-4 text-ember" aria-hidden="true" />
+          Votre spot à Agadir Bay
         </div>
+        <h3 class="mt-4 font-editorial text-3xl font-medium tracking-tight sm:text-4xl">{restaurant.name}</h3>
+        <address class="mt-3 text-base leading-7 text-cream/75 not-italic">
+          {restaurant.address.split(',').map((line, index) => (
+            <>{index > 0 && (index === 1 ? <br /> : ', ')}{line.trim()}</>
+          ))}
+        </address>
+        <div class="mt-7 grid gap-3 sm:max-w-sm">
+          <a href={restaurant.links.maps} target="_blank" rel="noopener noreferrer"
+            aria-label="Obtenir l’itinéraire sur Google Maps (nouvel onglet)"
+            class="visit-action flex min-h-14 items-center justify-center gap-3 rounded-xl bg-[#d6311c] px-5 py-3 text-base font-bold text-white transition-colors hover:bg-[#c92d19]">
+            <Navigation className="size-5 shrink-0" aria-hidden="true" />
+            Obtenir l’itinéraire
+            <ArrowUpRight className="size-4 shrink-0" aria-hidden="true" />
+          </a>
+          <a href={restaurant.phoneHref} aria-label={`Appeler Peri Peri Grill au ${restaurant.phoneDisplay}`}
+            class="visit-action flex min-h-14 items-center justify-center gap-3 rounded-xl border border-line-dark px-4 py-3 font-bold transition-colors hover:border-cream/50 hover:bg-cream/5">
+            <Phone className="size-4 shrink-0 text-ember" aria-hidden="true" />
+            <span>{restaurant.phoneDisplay}</span>
+          </a>
+        </div>
+        {restaurant.links.whatsapp && (
+          <a href={restaurant.links.whatsapp} target="_blank" rel="noopener noreferrer"
+            aria-label="Nous écrire sur WhatsApp (nouvel onglet)"
+            class="mt-3 inline-flex min-h-11 items-center gap-2.5 self-start text-sm text-cream/75 underline decoration-cream/25 underline-offset-4 transition-colors hover:text-cream">
+            <SiWhatsapp className="size-4 shrink-0" aria-hidden="true" />
+            Une question ? Écrivez-nous
+            <ArrowUpRight className="size-3.5 shrink-0" aria-hidden="true" />
+          </a>
+        )}
+      </div>
+      <div class="min-w-0 overflow-hidden rounded-2xl border border-line-dark bg-coal-900">
+        <iframe src={mapEmbedUrl} title={`Localisation de ${restaurant.name} à ${restaurant.locationName}, ${restaurant.city}`}
+          loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen
+          class="block h-[270px] w-full border-0 bg-cream sm:h-[330px] lg:h-[370px]" />
+        <a href={restaurant.links.maps} target="_blank" rel="noopener noreferrer"
+          aria-label="Agrandir la carte dans Google Maps (nouvel onglet)"
+          class="group flex min-h-16 items-center justify-between gap-4 border-t border-line-dark px-4 py-3 transition-colors hover:bg-cream/5 sm:px-5">
+          <span class="flex min-w-0 items-center gap-3">
+            <MapPin className="size-5 shrink-0 text-ember" aria-hidden="true" />
+            <span>
+              <span class="block text-sm font-bold">{restaurant.locationName}</span>
+              <span class="mt-0.5 block text-xs text-smoke">Agrandir dans Google Maps</span>
+            </span>
+          </span>
+          <ArrowUpRight className="size-5 shrink-0 text-cream/70 group-hover:text-cream" aria-hidden="true" />
+        </a>
       </div>
     </div>
 
-    <!-- Operating Hours Grid -->
-    <div class="mt-12 border-t border-line-dark pt-8 sm:mt-14 sm:pt-10 lg:mt-16 lg:grid lg:grid-cols-12 lg:gap-x-10 xl:gap-x-14">
-      <div class="lg:col-span-5">
-        <p class="text-xs font-bold uppercase tracking-[0.16em] text-smoke">
-          Hours
-        </p>
-        <h3 class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 font-display text-[clamp(1.75rem,3.5vw,2.5rem)] uppercase leading-none tracking-[-0.02em] text-cream sm:text-[clamp(2rem,4vw,3rem)]">
-          {canShowLateHeadline ? (
-            <>
-              Open until {hours[0].close}
-              <Moon className="size-8 shrink-0 text-peri-red" />
-            </>
-          ) : (
-            'Hours'
-          )}
+    <section id="opening-hours" aria-labelledby="hours-title" class="mt-10 scroll-mt-28 rounded-2xl bg-cream p-5 text-ink sm:mt-12 sm:p-8 lg:mt-14 lg:grid lg:grid-cols-[0.85fr_1.4fr] lg:gap-10 lg:p-10">
+      <div class="flex flex-col items-start">
+        <div class="flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.14em] text-ink/65">
+          <Clock3 className="size-4" aria-hidden="true" />
+          Horaires d’ouverture
+        </div>
+        <h3 id="hours-title" class="mt-4 font-display text-[clamp(1.625rem,3vw,2.5rem)] leading-tight uppercase">
+          {hours.length === 7 ? 'Le grill, 7 jours sur 7.' : 'À chacun son moment.'}
         </h3>
-        <p class="mt-4 max-w-sm text-base leading-relaxed text-cream/85 sm:text-lg">
-          Every day from {earliestOpen}
-          {lateSummary ? ` · ${lateSummary}` : ''}
-        </p>
-      </div>
-
-      <div class="mt-8 lg:col-span-7 lg:col-start-6 lg:mt-0">
-        <dl class="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4 lg:grid-cols-7 lg:gap-x-0">
-          {hours.map((day) => {
-            const opensLater = toMinutes(day.open) > earliestOpenMinutes;
-            return (
-              <div class="lg:border-l lg:border-line-dark lg:pl-4 lg:first:border-l-0 lg:first:pl-0">
-                <dt class="text-xs font-bold uppercase tracking-[0.16em] text-smoke">
-                  {DAY_LABELS[day.day]}
-                </dt>
-                <dd
-                  class={`mt-3 font-display text-xl tracking-[-0.015em] lg:text-2xl ${
-                    opensLater ? 'text-peri-red' : 'text-cream'
-                  }`}
-                >
-                  {day.open}
-                </dd>
-                <dd
-                  aria-label={`${day.open} to ${day.close}${day.closesNextDay ? ', closing the following day' : ''}`}
-                  class="mt-1 font-display text-xl tracking-[-0.015em] text-cream lg:text-2xl"
-                >
-                  {day.close}
-                </dd>
-              </div>
-            );
-          })}
-        </dl>
-        {anyClosesNextDay && (
-          <p class="mt-5 text-sm leading-relaxed text-smoke sm:mt-6">
-            Times after midnight are the next morning.
+        {commonLateClose && (
+          <p class="mt-5 flex items-center gap-3 sm:mt-6">
+            <Moon className="size-7 shrink-0 text-[#b62f1c]" aria-hidden="true" />
+            <span>
+              <span class="block text-sm text-ink/70">Jusqu’à</span>
+              <span class="font-display text-4xl leading-tight tracking-tight sm:text-5xl">{commonLateClose}</span>
+              <span class="ml-2 text-sm text-ink/70">du matin</span>
+            </span>
+          </p>
+        )}
+        {laterDays.length > 0 && (
+          <p class="mt-5 max-w-xs text-sm leading-relaxed text-ink/75 lg:mt-auto lg:pt-7">
+            {laterDays.map((day) => (
+              <span class="block">Le {dayLabels[day.day].toLowerCase()}, on vous accueille à partir de <strong class="font-bold text-ink">{day.open}</strong>.</span>
+            ))}
           </p>
         )}
       </div>
-    </div>
+      <div class="mt-7 min-w-0 border-t border-ink/15 pt-5 lg:mt-0 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
+        <table class="hours-table w-full border-collapse text-left text-sm" aria-describedby="hours-note">
+          <caption class="sr-only">Horaires hebdomadaires de Peri Peri Grill à Agadir</caption>
+          <thead>
+            <tr class="text-[10px] uppercase tracking-[0.12em] text-ink/60 sm:text-xs">
+              <th scope="col" class="pb-3 pl-3 font-bold">Jour</th>
+              <th scope="col" class="px-2 pb-3 text-right font-bold">Ouverture</th>
+              <th scope="col" class="pr-3 pb-3 text-right font-bold">Fermeture</th>
+            </tr>
+          </thead>
+          <tbody>
+            {hours.map((day) => (
+              <tr data-opening-day={day.day} class:list={['hours-row border-t border-ink/10', { 'hours-row-later': day.open > earliestOpen }]}>
+                <th scope="row" class="py-3 pl-3 font-semibold">
+                  <span class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    {dayLabels[day.day]}
+                    <span data-today-label hidden class="today-label rounded-full bg-ink px-1.5 py-0.5 text-[9px] font-bold text-cream">Aujourd’hui</span>
+                  </span>
+                </th>
+                <td class="px-2 py-3 text-right font-bold tabular-nums"><time>{day.open}</time></td>
+                <td class="py-3 pr-3 text-right font-semibold tabular-nums">
+                  <time>{day.close}</time>{day.closesNextDay && <span aria-label="le lendemain" class="ml-0.5 text-[#a32a18]">*</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p id="hours-note" class="mt-4 text-xs leading-relaxed text-ink/65">
+          Heure locale d’Agadir.{anyClosesNextDay && ' * Fermeture le lendemain matin.'}
+        </p>
+      </div>
+    </section>
   </Container>
 </section>
+
+<style>
+  .visit-action:focus-visible { outline-color: var(--color-cream); }
+  .hours-row-later { color: #a32a18; }
+  .hours-row[data-today] { background: var(--color-paper); box-shadow: inset 3px 0 var(--color-peri-red); }
+  .today-label[hidden] { display: none; }
+  @media (max-width: 359px) {
+    .hours-table { font-size: 13px; }
+    .hours-table th, .hours-table td { padding-left: 6px; padding-right: 6px; }
+    .hours-table thead th { font-size: 9px; letter-spacing: 0.04em; }
+  }
+</style>
+
+<script>
+  // Use the restaurant's local day, including for visitors in other time zones.
+  function highlightToday() {
+    const today = new Intl.DateTimeFormat('en-US', {
+      weekday: 'long', timeZone: 'Africa/Casablanca',
+    }).format(new Date()).toLowerCase();
+    document.querySelectorAll<HTMLElement>('[data-opening-day]').forEach((row) => {
+      const isToday = row.dataset.openingDay === today;
+      row.toggleAttribute('data-today', isToday);
+      const label = row.querySelector<HTMLElement>('[data-today-label]');
+      if (label) label.hidden = !isToday;
+    });
+  }
+  highlightToday();
+  window.setInterval(highlightToday, 60_000);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) highlightToday();
+  });
+</script>

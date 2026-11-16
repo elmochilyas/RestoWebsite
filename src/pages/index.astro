@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { Header } from '../components/layout/Header';
 import { Hero } from '../components/sections/Hero';
 import SignatureDishes from '../components/astro/SignatureDishes.astro';
-import { HeatSelector } from '../components/sections/HeatSelector';
+import FlavorShowcase from '../components/astro/FlavorShowcase.astro';
 import StorySection from '../components/astro/StorySection.astro';
 import GallerySection from '../components/astro/GallerySection.astro';
 import ReviewsSection from '../components/astro/ReviewsSection.astro';
@@ -16,7 +16,7 @@ import Footer from '../components/astro/Footer.astro';
   <main id="main-content">
     <Hero client:load />
     <SignatureDishes />
-    <HeatSelector client:visible />
+    <FlavorShowcase />
     <StorySection />
     <GallerySection />
     <ReviewsSection />
