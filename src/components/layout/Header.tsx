@@ -55,7 +55,7 @@ export function Header({ currentPath = '/' }: HeaderProps) {
   // Scroll listener for condensing the floating pill and clearing section at top
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 40)
+      setScrolled(window.scrollY > 20)
       if (window.scrollY < 120) {
         setActiveSection('')
       }
@@ -70,7 +70,10 @@ export function Header({ currentPath = '/' }: HeaderProps) {
     if (currentPath !== '/') return
     const heroEl = document.getElementById('hero')
     const sectionEls = navLinks
-      .filter((link) => link.target.kind === 'section')
+      .filter(
+        (link): link is (typeof navLinks)[number] & { target: { kind: 'section'; sectionId: string } } =>
+          link.target.kind === 'section',
+      )
       .map((link) => document.getElementById(link.target.sectionId))
       .filter((el): el is HTMLElement => el !== null)
 
@@ -93,7 +96,10 @@ export function Header({ currentPath = '/' }: HeaderProps) {
   // Track Hero visibility to display bottom sticky bar
   useEffect(() => {
     const hero = document.getElementById('hero')
-    if (!hero) return
+    if (!hero) {
+      setIsHeroVisible(false)
+      return
+    }
     const observer = new IntersectionObserver(
       ([entry]) => setIsHeroVisible(entry.isIntersecting),
       { threshold: 0.15 },
@@ -104,7 +110,7 @@ export function Header({ currentPath = '/' }: HeaderProps) {
 
   // Track Footer visibility to dismiss sticky bar before collision
   useEffect(() => {
-    const footer = document.querySelector('footer')
+    const footer = document.getElementById('site-footer')
     if (!footer) return
     const observer = new IntersectionObserver(
       ([entry]) => setIsFooterVisible(entry.isIntersecting),
@@ -122,7 +128,7 @@ export function Header({ currentPath = '/' }: HeaderProps) {
     const prevBodyOverflow = document.body.style.overflow
     const backgroundElements = [
       document.getElementById('main-content'),
-      document.querySelector('footer'),
+      document.getElementById('site-footer'),
     ].filter((el): el is HTMLElement => el instanceof HTMLElement)
 
     document.documentElement.style.overflow = 'hidden'
@@ -185,29 +191,44 @@ export function Header({ currentPath = '/' }: HeaderProps) {
 
   const isLinkActive = useCallback(
     (item: (typeof navItems)[number]) => {
-      // In the hero section or top of the page, no navigation link should be active
+      if (item.target.kind === 'page') {
+        return currentPath === item.target.path
+      }
+      if (currentPath !== item.target.path) return false
+      // On homepage, in the hero section or top of the page, no section link should be active
       if (isHeroVisible || !activeSection) return false
-      return item.target.kind === 'section'
-        ? currentPath === item.target.path && activeSection === item.target.sectionId
-        : currentPath === item.target.path
+      return activeSection === item.target.sectionId
     },
     [activeSection, currentPath, isHeroVisible],
   )
 
   const shouldShowStickyBar = isMobile && !isHeroVisible && !isFooterVisible && !mobileOpen
+  const isMenuPage = currentPath === '/menu'
 
   return (
     <>
+      {/* ── Scrolled Header Backdrop (Only on /menu to fuse seamlessly with sticky category bar) ── */}
+      {isMenuPage && (
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none fixed inset-x-0 top-0 z-40 h-[70px] sm:h-[78px] bg-coal-950/98 backdrop-blur-2xl transition-opacity duration-300 border-b-0 shadow-none ${
+            scrolled ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+      )}
+
       {/* ── Desktop & Mobile Floating Island Header ── */}
       <header
         aria-hidden={mobileOpen ? 'true' : undefined}
-        className="pointer-events-none fixed inset-x-0 top-0 z-50 pt-3 sm:pt-4"
+        className="pointer-events-none fixed inset-x-0 top-0 z-50 pt-2.5 sm:pt-3"
       >
         <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
           <div
             className={`pointer-events-auto relative flex items-center justify-between rounded-2xl border px-3.5 py-2.5 sm:rounded-full sm:px-5 sm:py-2.5 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ${
               scrolled
-                ? 'border-white/15 bg-coal-950/95 shadow-[0_16px_40px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.05)] backdrop-blur-2xl'
+                ? isMenuPage
+                  ? 'border-white/15 bg-coal-900/90 shadow-none backdrop-blur-2xl'
+                  : 'border-white/15 bg-coal-950/95 shadow-[0_16px_40px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.05)] backdrop-blur-2xl'
                 : 'border-white/10 bg-coal-950/80 shadow-[0_12px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.03)] backdrop-blur-xl'
             }`}
           >
