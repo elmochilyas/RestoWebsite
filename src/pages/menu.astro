@@ -308,11 +308,15 @@ const itemsByCategory = menuCategories.map((cat) => ({
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Commander Peri Peri Grill sur Glovo (nouvel onglet)"
-              class="group inline-flex min-h-[52px] items-center justify-center gap-3 rounded-xl bg-[#FFC244] px-7 text-sm font-extrabold uppercase tracking-wider text-[#121f19] shadow-[0_4px_20px_rgba(255,194,68,0.3)] transition-all duration-200 hover:bg-[#ffd166] hover:scale-[1.02] hover:shadow-[0_8px_28px_rgba(255,194,68,0.45)] active:scale-95 shrink-0"
+              class="hero-button hero-button-glovo shrink-0"
             >
-              <SiGlovo className="size-5 text-[#00A082]" aria-hidden="true" />
-              <span>Commander sur Glovo</span>
-              <ArrowUpRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+              <span class="hero-button-icon" aria-hidden="true">
+                <SiGlovo className="size-5" />
+              </span>
+              <span class="hero-button-label">Commander sur <strong>Glovo</strong></span>
+              <span class="hero-button-arrow" aria-hidden="true">
+                <ArrowUpRight className="size-4" />
+              </span>
             </a>
           </div>
         </div>

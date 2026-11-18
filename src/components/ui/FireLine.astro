@@ -1,0 +1,333 @@
+---
+interface Props {
+  class?: string;
+  className?: string;
+}
+
+const { class: classNameProp, className } = Astro.props;
+
+// Open contours are joined at build time into one full-width path per colour.
+// There are no overlapping panels or independently moving seams.
+const contours = {
+  red: {
+    left: `M0 19
+      C21 36 20 65 14 87 C9 107 0 130 12 143
+      C22 155 36 145 31 135 C28 128 20 127 16 131
+      C24 116 38 117 44 127 C50 110 39 84 52 66
+      C62 51 77 57 84 67 C64 63 58 78 63 94
+      C69 113 81 130 65 151 C91 141 91 109 80 83
+      C102 102 108 124 98 143 C117 131 131 116 123 99
+      C145 108 149 125 135 138 C121 151 129 159 147 153
+      C136 139 145 119 168 118 C155 126 155 140 165 149
+      C173 155 177 157 180 158`,
+    middle: `C15 119 30 114 34 103 C18 108 11 97 18 88
+      C24 79 34 79 43 81 C34 67 37 48 54 43
+      C72 38 84 49 84 63 C74 54 65 57 66 66
+      C67 76 82 79 86 91 C91 105 81 116 69 119
+      C90 125 111 114 108 100 C107 92 102 87 96 85
+      C117 80 129 91 130 107 C136 91 143 86 155 88
+      C160 88 164 85 163 78 C177 78 186 90 181 100
+      C177 106 180 112 190 112 C181 96 192 79 209 76
+      C222 73 232 78 237 86 C220 81 212 88 216 100
+      C220 112 236 116 246 108 C236 109 229 102 234 95
+      C240 85 254 86 263 94 C271 101 278 96 277 85
+      C275 76 280 65 292 62 C280 82 287 106 300 112`,
+    right: `C15 154 23 141 17 131 C13 125 7 124 3 126
+      C17 114 34 126 31 141 C49 128 40 115 22 113
+      C45 101 64 117 57 135 C70 127 75 111 68 100
+      C91 109 86 130 83 140 C79 153 88 158 97 145
+      C85 115 91 88 115 65 C104 93 113 117 127 137
+      C140 120 134 100 126 89 C154 91 151 131 145 151
+      C169 126 150 91 151 63 C152 38 164 19 180 23
+      L180 41 C166 48 177 66 180 73`,
+    start: 112, leftJoin: 158, rightJoin: 159,
+  },
+  orange: {
+    left: `M0 142
+      C12 163 32 158 39 143 C48 147 53 134 51 113
+      C68 132 61 151 44 164 C69 161 86 149 93 131
+      C96 142 92 152 88 158 C104 152 114 142 121 135
+      C111 153 124 165 146 161 C154 160 159 157 163 154
+      C148 144 150 131 160 125 C154 142 171 156 180 165`,
+    middle: `C21 132 45 120 50 106 C40 107 32 99 36 91
+      C41 104 56 100 58 87 C60 77 57 69 61 65
+      C59 83 80 85 77 101 C76 114 60 120 49 124
+      C74 137 109 129 119 114 L127 126
+      C137 115 139 101 151 99 C147 110 154 122 168 123
+      C176 124 183 121 189 117 C201 130 220 132 234 124
+      C212 123 198 109 202 96 C204 91 208 88 212 87
+      C205 106 231 126 249 118 C266 113 279 113 282 98
+      C284 90 282 83 286 79 C281 100 289 121 300 125`,
+    right: `C16 159 25 156 24 140 C35 146 34 158 30 164
+      C47 160 58 153 64 144 C66 153 62 157 61 159
+      C74 155 79 146 79 136 C80 156 92 166 103 155
+      C116 143 101 122 106 101 C110 125 125 145 130 155
+      C139 151 142 141 143 133 C147 143 146 157 140 167
+      C167 157 171 121 163 98 C160 87 159 76 162 66
+      C168 85 179 95 180 111`,
+    start: 125, leftJoin: 165, rightJoin: 170,
+  },
+  yellow: {
+    left: `M0 159
+      C14 177 34 167 44 157 C40 166 34 172 30 175
+      C55 176 73 170 83 163 L82 170 C101 167 113 160 119 156
+      C115 170 143 176 163 166 C168 172 174 174 180 175`,
+    middle: `C20 140 46 132 58 121 C51 132 48 133 43 136
+      C69 141 99 138 117 130 L127 137 L139 124
+      C143 136 165 140 183 132 C202 142 225 139 239 132
+      C263 139 287 129 292 113 C294 125 288 134 284 138
+      C290 132.5 295 133.75 300 135`,
+    right: `C12 169 21 166 24 156 C26 166 23 173 20 177
+      C37 171 52 171 62 165 L61 170 L79 163
+      C84 175 100 177 110 167 C119 160 119 153 118 145
+      C126 155 125 165 132 171 C139 171 143 166 145 161
+      C146 168 145 171 144 175 C166 169 178 151 180 136`,
+    start: 135, leftJoin: 175, rightJoin: 178,
+  },
+};
+
+type PointTransform = (x: number, y: number) => [number, number];
+
+// These contours use only absolute M/L/C commands, whose arguments are x/y pairs.
+function mapContour(path: string, transform: PointTransform) {
+  return path.replace(/([MLC])([^MLC]+)/g, (_, command: string, coordinates: string) => {
+    const values = coordinates.trim().split(/[\s,]+/).map(Number);
+    const points = [];
+    for (let index = 0; index < values.length; index += 2) {
+      points.push(...transform(values[index], values[index + 1]).map(value => +value.toFixed(3)));
+    }
+    return `${command}${points.join(' ')} `;
+  });
+}
+
+const layouts = [
+  { name: 'mobile', width: 600, edge: 170, curls: [1] },
+  { name: 'tablet', width: 1000, edge: 250, curls: [1.08, 0.92] },
+  { name: 'desktop', width: 1440, edge: 280, curls: [0.94, 1.15, 0.91] },
+];
+
+const artwork = layouts.map(layout => {
+  const middleWidth = layout.width - layout.edge * 2;
+  const weight = layout.curls.reduce((total, value) => total + value, 0);
+  const edgeScale = layout.edge / 180;
+  const paths = Object.entries(contours).map(([colour, contour]) => {
+    let offset = 0;
+    let d = mapContour(contour.left, (x, y) => [x * edgeScale, y]);
+    layout.curls.forEach((curl, index) => {
+      const width = middleWidth * curl / weight;
+      const height = [1.06, 0.87, 1.15][index];
+      d += mapContour(contour.middle, (x, y) => {
+        const position = offset + x * width / 300;
+        const baseline = contour.leftJoin + (contour.rightJoin - contour.leftJoin) * position / middleWidth;
+        // Taper the height variation at joins to preserve a smooth shared contour.
+        const envelope = Math.sin(Math.PI * x / 300) ** 2;
+        return [layout.edge + position, baseline + (y - contour.start) * (1 + (height - 1) * envelope)];
+      });
+      offset += width;
+    });
+    d += mapContour(contour.right, (x, y) => [layout.width - layout.edge + x * edgeScale, y]);
+    return { colour, d: `${d} L${layout.width} 184 H0 Z` };
+  });
+  return { ...layout, edgeScale, paths };
+});
+---
+
+<footer-fire aria-hidden="true" class:list={['footer-fire-line', classNameProp, className]}>
+  {artwork.map(({ name, width, edge, edgeScale, paths }) => (
+    <svg class={`fire-art fire-art-${name}`} viewBox={`0 0 ${width} 180`} preserveAspectRatio="none" focusable="false">
+      <g class="fire-body">
+        {paths.map(({ colour, d }) => <path fill={`var(--fire-${colour})`} d={d} />)}
+      </g>
+      <g transform={`scale(${edgeScale} 1)`}>
+        <g class="fire-ember">
+          <path fill="var(--fire-red)" d="M27 38 C56 40 30 65 31 83 C14 66 30 52 27 38 Z" />
+          <path fill="var(--fire-orange)" d="M32 44 C43 47 29 59 27 69 C23 60 34 51 32 44 Z" />
+        </g>
+        <path class="fire-ember fire-ember-small" fill="var(--fire-red)" d="M153 111 C163 99 151 94 168 86 C164 97 170 103 153 111 Z" />
+      </g>
+      <g transform={`translate(${width - edge} 0) scale(${edgeScale} 1)`}>
+        <g class="fire-ember fire-ember-right">
+          <path fill="var(--fire-red)" d="M142 84 C148 66 126 63 130 45 C112 60 138 69 142 84 Z" />
+          <path fill="var(--fire-orange)" d="M136 68 C130 60 125 57 128 51 C119 59 130 64 136 68 Z" />
+        </g>
+        <path class="fire-ember fire-ember-small" fill="var(--fire-red)" d="M7 107 C-4 93 5 84 14 86 C21 89 26 82 33 86 C18 88 8 92 7 107 Z" />
+      </g>
+    </svg>
+  ))}
+</footer-fire>
+
+<script>
+  import { animateFlamePath, parseFlamePath } from '../../lib/fire-motion';
+
+  function animateFire(root: HTMLElement) {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const artwork = Array.from(root.querySelectorAll<SVGSVGElement>('.fire-art'), svg => ({
+      svg,
+      width: svg.viewBox.baseVal.width,
+      paths: Array.from(svg.querySelectorAll<SVGPathElement>('.fire-body > path'), element => {
+        const original = element.getAttribute('d') ?? '';
+        return { element, original, contour: parseFlamePath(original) };
+      }),
+    }));
+
+    let active: typeof artwork[number] | undefined;
+    let visible = false;
+    let pageActive = true;
+    let frame: number | null = null;
+    let lastTime: number | null = null;
+    let elapsed = 0;
+    const listeners = new AbortController();
+
+    function stop() {
+      if (frame !== null) cancelAnimationFrame(frame);
+      frame = null;
+      lastTime = null;
+    }
+
+    function render(now: number) {
+      frame = null;
+      if (!active || !visible || !pageActive || document.hidden || reducedMotion.matches) return;
+
+      // Time-based movement stays consistent on 60/120Hz displays. Capping the
+      // delta also prevents jumps after a suspended tab or a long browser frame.
+      if (lastTime !== null) elapsed += Math.min((now - lastTime) / 1000, 0.05);
+      lastTime = now;
+      for (const { element, contour } of active.paths) {
+        element.setAttribute('d', animateFlamePath(contour, active.width, elapsed));
+      }
+      frame = requestAnimationFrame(render);
+    }
+
+    function syncMotion() {
+      const running = Boolean(active && visible && pageActive && !document.hidden && !reducedMotion.matches);
+      root.dataset.fireMotion = reducedMotion.matches ? 'reduced' : running ? 'running' : 'paused';
+
+      if (reducedMotion.matches) {
+        for (const { paths } of artwork) {
+          for (const { element, original } of paths) element.setAttribute('d', original);
+        }
+      }
+
+      if (running && frame === null) frame = requestAnimationFrame(render);
+      else if (!running) stop();
+    }
+
+    function selectArtwork() {
+      active = artwork.find(({ svg }) => getComputedStyle(svg).display !== 'none');
+      syncMotion();
+    }
+
+    const intersection = new IntersectionObserver(entries => {
+      visible = entries.some(entry => entry.isIntersecting);
+      syncMotion();
+    });
+    const resize = new ResizeObserver(selectArtwork);
+    intersection.observe(root);
+    resize.observe(root);
+    reducedMotion.addEventListener('change', syncMotion, { signal: listeners.signal });
+    document.addEventListener('visibilitychange', syncMotion, { signal: listeners.signal });
+    window.addEventListener('pagehide', () => { pageActive = false; syncMotion(); }, { signal: listeners.signal });
+    window.addEventListener('pageshow', () => { pageActive = true; syncMotion(); }, { signal: listeners.signal });
+    selectArtwork();
+
+    return () => {
+      stop();
+      intersection.disconnect();
+      resize.disconnect();
+      listeners.abort();
+      for (const { paths } of artwork) {
+        for (const { element, original } of paths) element.setAttribute('d', original);
+      }
+      delete root.dataset.fireMotion;
+    };
+  }
+
+  if (!customElements.get('footer-fire')) {
+    customElements.define('footer-fire', class extends HTMLElement {
+      private stopAnimation?: () => void;
+
+      connectedCallback() {
+        this.stopAnimation?.();
+        this.stopAnimation = animateFire(this);
+      }
+
+      disconnectedCallback() {
+        this.stopAnimation?.();
+        this.stopAnimation = undefined;
+      }
+    });
+  }
+</script>
+
+<style>
+  .footer-fire-line {
+    --fire-red: #d60808;
+    --fire-orange: #f47705;
+    --fire-yellow: #ffc515;
+    display: block;
+    position: relative;
+    width: 100%;
+    height: clamp(144px, 19vw, 252px);
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+    /* Lift the artwork through its empty upper area, keeping the flames tall. */
+    margin-top: calc(-1 * clamp(18px, 5.5vw, 84px));
+    margin-bottom: calc(-1 * env(safe-area-inset-bottom, 0px));
+    border-bottom: env(safe-area-inset-bottom, 0px) solid var(--fire-yellow);
+  }
+
+  .fire-art {
+    display: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .fire-art-mobile { display: block; }
+
+  @media (min-width: 640px) {
+    .fire-art-mobile { display: none; }
+    .fire-art-tablet { display: block; }
+  }
+
+  @media (min-width: 1280px) {
+    .fire-art-tablet { display: none; }
+    .fire-art-desktop { display: block; }
+  }
+
+  .fire-ember {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  [data-fire-motion] .fire-ember {
+    animation: ember-rise 3.1s linear infinite;
+    animation-play-state: paused;
+  }
+
+  [data-fire-motion] .fire-ember-right {
+    animation-duration: 3.7s;
+    animation-delay: -1.8s;
+  }
+
+  [data-fire-motion] .fire-ember-small {
+    animation-duration: 2.6s;
+    animation-delay: -0.9s;
+  }
+
+  [data-fire-motion='running'] .fire-ember { animation-play-state: running; }
+
+  @keyframes ember-rise {
+    0% { opacity: 0; transform: translate(0, 10px) scale(0.7) rotate(-8deg); }
+    18% { opacity: 0.95; transform: translate(2px, 3px) scale(0.95) rotate(-2deg); }
+    52% { opacity: 0.8; transform: translate(-3px, -9px) scale(0.85) rotate(9deg); }
+    82% { opacity: 0.35; transform: translate(1px, -21px) scale(0.6) rotate(16deg); }
+    100% { opacity: 0; transform: translate(4px, -29px) scale(0.35) rotate(22deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-fire-motion] .fire-ember { animation: none; }
+  }
+</style>

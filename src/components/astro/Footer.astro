@@ -1,23 +1,23 @@
 ---
-import { ArrowUp, ArrowUpRight, MapPin, Phone } from 'lucide-react';
+import { ArrowUpRight, MapPin, Phone } from 'lucide-react';
 import { SiInstagram, SiGlovo, SiGooglemaps, SiWhatsapp } from 'react-icons/si';
 import { restaurant } from '../../content';
 import { navLinks } from '../../content/navigation';
 import Container from '../ui/Container.astro';
 import PeriPeriLogo from '../ui/PeriPeriLogo.astro';
+import FireLine from '../ui/FireLine.astro';
 
-const year = new Date().getFullYear();
 const contactActions = [
-  { icon: SiInstagram, label: 'Instagram', action: 'Suivre le grill', href: restaurant.links.instagram },
-  ...(restaurant.links.whatsapp ? [{ icon: SiWhatsapp, label: 'WhatsApp', action: 'Nous écrire', href: restaurant.links.whatsapp }] : []),
-  { icon: SiGlovo, label: 'Glovo', action: 'Se faire livrer', href: restaurant.links.glovo },
-  { icon: SiGooglemaps, label: 'Google Maps', action: 'Nous retrouver', href: restaurant.links.maps },
+  { brand: 'instagram', icon: SiInstagram, label: 'Instagram', action: 'Suivre le grill', href: restaurant.links.instagram },
+  ...(restaurant.links.whatsapp ? [{ brand: 'whatsapp', icon: SiWhatsapp, label: 'WhatsApp', action: 'Nous écrire', href: restaurant.links.whatsapp }] : []),
+  { brand: 'glovo', icon: SiGlovo, label: 'Glovo', action: 'Se faire livrer', href: restaurant.links.glovo },
+  { brand: 'maps', icon: SiGooglemaps, label: 'Google Maps', action: 'Nous retrouver', href: restaurant.links.maps },
 ];
 ---
 
-<footer id="site-footer" class="site-footer border-t border-line-dark bg-[#0d0907] text-cream">
-  <Container>
-    <div class="grid gap-9 py-10 sm:grid-cols-2 sm:gap-x-10 sm:gap-y-9 sm:py-14 lg:grid-cols-[1.1fr_0.7fr_1.2fr] lg:gap-12 lg:py-16">
+<footer id="site-footer" class="site-footer relative overflow-hidden border-t border-line-dark bg-[#0d0907] text-cream">
+  <Container class="relative z-10">
+    <div class="grid gap-9 pt-10 sm:grid-cols-2 sm:gap-x-10 sm:gap-y-9 sm:pt-14 lg:grid-cols-[1.1fr_0.7fr_1.2fr] lg:gap-12 lg:pt-16">
       <div class="min-w-0 sm:col-span-2 lg:col-span-1">
         <a href="/" aria-label="Peri Peri Grill — accueil" class="inline-flex rounded-sm">
           <PeriPeriLogo width={150} height={83} class="h-[83px] w-[150px]" />
@@ -52,36 +52,137 @@ const contactActions = [
       </nav>
       <div class="min-w-0 border-t border-line-dark pt-6 sm:border-t-0 sm:pt-0 lg:pt-2">
         <h2 class="text-xs font-bold uppercase tracking-[0.16em] text-smoke">Gardons le contact</h2>
-        <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-1 xl:grid-cols-2">
+        <div class="footer-contact-list">
           {contactActions.map((item) => (
-            <a href={item.href} target="_blank" rel="noopener noreferrer" aria-label={`${item.action} sur ${item.label} (nouvel onglet)`} class="footer-contact group flex min-h-[92px] min-w-0 items-start gap-3 rounded-xl border border-line-dark bg-cream/[0.025] p-3.5 transition-colors hover:border-cream/35 hover:bg-cream/[0.06]">
-              <item.icon className="mt-0.5 size-[18px] shrink-0 text-cream" aria-hidden="true" />
-              <span class="min-w-0 flex-1">
-                <span class="flex items-center justify-between gap-1 text-sm font-bold">
-                  {item.label}
-                  <ArrowUpRight className="size-3.5 shrink-0 text-smoke transition-colors group-hover:text-ember" aria-hidden="true" />
-                </span>
-                <span class="mt-1 block text-xs leading-relaxed text-smoke">{item.action}</span>
+            <a href={item.href} target="_blank" rel="noopener noreferrer" aria-label={`${item.action} sur ${item.label} (nouvel onglet)`} data-brand={item.brand} class="footer-contact">
+              <span class="footer-contact-icon">
+                <item.icon className="size-4" aria-hidden="true" />
+              </span>
+              <span class="min-w-0">
+                <span class="footer-contact-label">{item.label}</span>
+                <span class="footer-contact-description">{item.action}</span>
+              </span>
+              <span class="footer-contact-arrow" aria-hidden="true">
+                <ArrowUpRight className="size-3" />
               </span>
             </a>
           ))}
         </div>
       </div>
     </div>
-    <div class="flex flex-col gap-3 border-t border-line-dark py-5 text-xs text-smoke sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-      <p class="leading-relaxed">© {year} {restaurant.name}<span class="mx-2 text-cream/30" aria-hidden="true">/</span>{restaurant.locationName}</p>
-      <a href="#main-content" class="inline-flex min-h-11 items-center gap-2 self-start rounded-sm font-semibold transition-colors hover:text-cream sm:self-auto">
-        Retour en haut
-        <ArrowUp className="size-4" aria-hidden="true" />
-      </a>
-    </div>
   </Container>
+
+  <!-- Ligne de feu animée d'un bout à l'autre au bas du footer -->
+  <FireLine />
 </footer>
 
 <style>
   .site-footer { padding-bottom: env(safe-area-inset-bottom, 0px); }
-  @media (max-width: 359px) {
-    .footer-contact { flex-direction: column; gap: 0.625rem; }
-    .footer-contact > span { width: 100%; }
+
+  .footer-contact-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+    max-width: 28rem;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .footer-contact {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) 12px;
+    min-width: 0;
+    min-height: 60px;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid color-mix(in srgb, var(--contact-color) 24%, transparent);
+    border-radius: 10px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--contact-color) 10%, transparent), color-mix(in srgb, var(--contact-color) 3%, transparent));
+    transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  .footer-contact[data-brand='instagram'] { --contact-color: #f472b6; }
+  .footer-contact[data-brand='whatsapp'] { --contact-color: #25d366; }
+  .footer-contact[data-brand='glovo'] { --contact-color: #ffc244; }
+  .footer-contact[data-brand='maps'] { --contact-color: #4285f4; }
+
+  .footer-contact-icon {
+    display: inline-flex;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: var(--contact-color);
+    background: color-mix(in srgb, var(--contact-color) 14%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--contact-color) 12%, transparent);
+  }
+
+  [data-brand='instagram'] .footer-contact-icon {
+    color: #fff;
+    background: radial-gradient(circle at 25% 110%, #ffdc80 0%, #fcaf45 20%, #f77737 35%, #e1306c 60%, #833ab4 100%);
+  }
+
+  [data-brand='glovo'] .footer-contact-icon {
+    color: #006653;
+    background: #ffc244;
+  }
+
+  [data-brand='maps'] .footer-contact-icon {
+    color: #4285f4;
+    background: #fff;
+    box-shadow: inset 0 -3px #34a853;
+  }
+
+  .footer-contact-arrow {
+    display: inline-flex;
+    color: color-mix(in srgb, var(--contact-color) 70%, #fff);
+    opacity: 0.7;
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .footer-contact-label {
+    display: block;
+    color: var(--color-cream);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .footer-contact-description {
+    display: block;
+    margin-top: 2px;
+    color: #bbafa5;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .footer-contact:focus-visible {
+    outline-color: var(--contact-color);
+    border-color: var(--contact-color);
+  }
+
+  @media (hover: hover) {
+    .footer-contact:hover {
+      border-color: color-mix(in srgb, var(--contact-color) 65%, transparent);
+      background-color: color-mix(in srgb, var(--contact-color) 6%, transparent);
+      box-shadow: 0 4px 12px #0003;
+      transform: translateY(-1px);
+    }
+
+    .footer-contact:hover .footer-contact-arrow {
+      opacity: 1;
+      transform: translate(2px, -2px);
+    }
+  }
+
+  .footer-contact:active { transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .footer-contact,
+    .footer-contact-arrow { transition: none; }
+    .footer-contact:hover,
+    .footer-contact:hover .footer-contact-arrow { transform: none; }
   }
 </style>

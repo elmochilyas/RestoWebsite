@@ -1,0 +1,278 @@
+/* ── Brand Button Design System (Consistent with Hero Section) ── */
+
+.hero-button {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 30px;
+  min-height: 58px;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: left;
+  text-decoration: none;
+  transition: border-color 200ms ease, background-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+}
+
+.hero-button::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 25%, #fff2 50%, transparent 75%);
+  transform: translateX(-125%);
+  transition: transform 550ms ease;
+  pointer-events: none;
+}
+
+.hero-button-icon,
+.hero-button-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.hero-button-icon {
+  width: 34px;
+  height: 34px;
+}
+
+.hero-button-label {
+  padding-inline: 2px;
+  white-space: nowrap;
+}
+
+.hero-button-arrow {
+  width: 30px;
+  height: 30px;
+  transition: background-color 200ms ease, transform 200ms ease;
+}
+
+.hero-button-arrow svg,
+.hero-button-icon svg {
+  transition: transform 200ms ease;
+}
+
+.hero-button:focus-visible {
+  outline: 3px solid var(--button-focus, #fff);
+  outline-offset: 4px;
+}
+
+/* ── Menu & Exploration Variant (Flame Red Gradient) ── */
+.hero-button-menu {
+  --button-focus: #fff;
+  border-color: #ff98754d;
+  background: linear-gradient(115deg, #b52819, #d43920);
+  color: #fff;
+  box-shadow: inset 0 1px 0 #ffffff29, 0 5px 20px #e7371f26;
+}
+
+.hero-button-menu .hero-button-icon {
+  background: #ffffff14;
+  box-shadow: inset 0 0 0 1px #ffffff1f;
+}
+
+.hero-button-menu .hero-button-arrow {
+  background: #fff4e8;
+  color: #b52819;
+  box-shadow: 0 2px 6px #59100626;
+}
+
+/* ── Glovo Ordering Variant (Charcoal & Brand Gold) ── */
+.hero-button-glovo {
+  --button-focus: #ffc244;
+  border-color: #ffc24466;
+  background: #191910f2;
+  color: var(--color-cream);
+  box-shadow: inset 0 1px 0 #ffc2440d, 0 5px 20px #0002;
+  backdrop-filter: blur(12px);
+}
+
+.hero-button-glovo .hero-button-icon {
+  background: #ffc244;
+  color: #006653;
+}
+
+.hero-button-glovo .hero-button-label strong {
+  color: #ffc244;
+  font-weight: 800;
+}
+
+.hero-button-glovo .hero-button-arrow {
+  background: #ffc24414;
+  color: #ffc244;
+}
+
+/* ── Location / Google Maps Variant (Charcoal & Peri-Red Ember Accent) ── */
+.hero-button-location {
+  --button-focus: var(--color-peri-red, #e7371f);
+  border-color: rgba(231, 55, 31, 0.38);
+  background: #1a120ef2;
+  color: var(--color-cream);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 16px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+}
+
+.hero-button-location .hero-button-icon {
+  background: rgba(231, 55, 31, 0.16);
+  border: 1px solid rgba(231, 55, 31, 0.35);
+  color: var(--color-peri-red, #e7371f);
+}
+
+.hero-button-location .hero-button-arrow {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-cream);
+}
+
+/* ── Compact Modifier (hero-button-sm: 3-column with arrow) ── */
+.hero-button-sm {
+  grid-template-columns: 28px minmax(0, 1fr) 26px;
+  min-height: 42px;
+  min-width: 0 !important;
+  gap: 8px;
+  padding: 5px 10px 5px 6px;
+  font-size: 12.5px;
+}
+
+.hero-button-sm .hero-button-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.hero-button-sm .hero-button-arrow {
+  width: 26px;
+  height: 26px;
+}
+
+/* ── Compact 2-column Modifier (hero-button-compact: Icon + Label, ideal for split mobile bars) ── */
+.hero-button-compact {
+  grid-template-columns: 28px minmax(0, 1fr);
+  min-height: 44px;
+  height: 44px;
+  min-width: 0 !important;
+  gap: 8px;
+  padding: 4px 14px 4px 6px;
+  font-size: 12.5px;
+}
+
+.hero-button-compact .hero-button-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.hero-button-compact .hero-button-label {
+  padding-inline: 0;
+  text-align: left;
+}
+
+/* ── Inline / Fit-content Modifier ── */
+.hero-button-inline {
+  display: inline-grid;
+  width: fit-content;
+  min-width: 0;
+}
+
+/* ── Hover Micro-interactions ── */
+@media (hover: hover) {
+  .hero-button:hover {
+    transform: translateY(-2px);
+  }
+
+  .hero-button:hover::before {
+    transform: translateX(125%);
+  }
+
+  .hero-button-menu:hover {
+    border-color: #ff987599;
+    box-shadow: inset 0 1px 0 #ffffff29, 0 8px 28px #e7371f40;
+  }
+
+  .hero-button-glovo:hover {
+    background: #242116;
+    border-color: #ffc244;
+    box-shadow: 0 8px 28px #ffc24414;
+  }
+
+  .hero-button-location:hover {
+    background: #241712;
+    border-color: rgba(231, 55, 31, 0.75);
+    box-shadow: 0 6px 24px rgba(231, 55, 31, 0.28);
+  }
+
+  .hero-button-menu:hover .hero-button-icon svg {
+    transform: rotate(-8deg);
+  }
+
+  .hero-button-menu:hover .hero-button-arrow svg {
+    transform: translateX(2px);
+  }
+
+  .hero-button-glovo:hover .hero-button-arrow {
+    background: #ffc24426;
+  }
+
+  .hero-button-glovo:hover .hero-button-arrow svg {
+    transform: translate(1px, -1px);
+  }
+
+  .hero-button-location:hover .hero-button-icon {
+    background: rgba(231, 55, 31, 0.28);
+    border-color: var(--color-peri-red, #e7371f);
+    color: #ff6a1a;
+  }
+
+  .hero-button-location:hover .hero-button-icon svg {
+    transform: scale(1.1);
+  }
+
+  .hero-button-location:hover .hero-button-arrow {
+    background: rgba(231, 55, 31, 0.22);
+    color: #fff;
+  }
+
+  .hero-button-location:hover .hero-button-arrow svg {
+    transform: translate(1px, -1px);
+  }
+}
+
+.hero-button:active {
+  transform: translateY(0) scale(0.985);
+}
+
+/* ── Standard Responsive Sizing (except when -sm or -compact is explicitly specified) ── */
+@media (min-width: 640px) {
+  .hero-button:not(.hero-button-sm):not(.hero-button-compact) {
+    min-height: 60px;
+    font-size: 15px;
+  }
+}
+
+/* ── Reduced Motion Accessibility ── */
+@media (prefers-reduced-motion: reduce) {
+  .hero-button,
+  .hero-button::before,
+  .hero-button-arrow,
+  .hero-button-arrow svg,
+  .hero-button-icon svg {
+    transition: none;
+  }
+
+  .hero-button::before {
+    display: none;
+  }
+
+  .hero-button:hover,
+  .hero-button:active,
+  .hero-button:hover .hero-button-arrow svg,
+  .hero-button:hover .hero-button-icon svg {
+    transform: none;
+  }
+}

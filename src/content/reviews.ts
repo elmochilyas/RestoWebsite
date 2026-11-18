@@ -1,35 +1,39 @@
 import type { ReputationTheme, Review } from '../types/content'
 
-// Verified public review excerpts only. Quotes are reproduced verbatim; never
-// invent names, quotes, dates, or ratings. sourceUrl points to the public
-// listing where each review was surfaced (listing page, not a fabricated
-// deep link) and is kept for reference only — it is not rendered.
+// Checked directly on Google Maps on 2026-11-18. Verbatim excerpts of the
+// text displayed by Google, including translation. sourceUrl is each review's
+// actual share link. Editorial snapshot, not an automatic feed.
 export const reviews: Review[] = [
   {
-    id: 'yousuf-a',
-    quote: 'chicken was very nice and juicy.',
+    id: 'mel-dim',
+    quote: 'Le poulet est délicieux, les menus enfants sont super. Repas copieux ! On a très bien mangé, et on reviendra',
     rating: 5,
-    reviewer: 'Yousuf A',
-    source: 'Tripadvisor',
-    dateLabel: 'May 2026',
-    sourceUrl:
-      'https://www.tripadvisor.co.uk/Restaurant_Review-g293731-d34394620-Reviews-Peri_Peri_Grill-Agadir_Souss_Massa.html',
+    reviewer: 'Mel Dim',
+    source: 'Google',
+    sourceUrl: 'https://maps.app.goo.gl/wv4k23tcdZ1A5UfP9',
+    topic: 'À partager en famille',
+    authorLabel: 'Local Guide',
+    translated: true,
   },
   {
-    id: 'lolita-delplanque',
-    quote: 'Plats généreux - menus variés',
+    id: 'karima-abouhay',
+    quote: 'Je recommande pour les amateurs de poulets tendre, juteux et bien épicé. Personnel agréable et respectueux',
     rating: 5,
-    reviewer: 'Lolita Delplanque',
+    reviewer: 'Karima ABOUHAY',
     source: 'Google',
-    sourceUrl: 'https://fr.restaurantguru.com/Peri-Peri-Grill-Agadir-Bay-Agadir',
+    sourceUrl: 'https://maps.app.goo.gl/QchyiPZ7kynTUK9U6',
+    topic: 'Du goût. Du caractère.',
+    translated: true,
   },
   {
-    id: 'amina-allali',
-    quote: 'Très bon rapport qualité prix.',
+    id: 'jamal-jamal',
+    quote: 'Très bon restaurant\nPoulet excellent et 5 niveaux de sauce de pas épicé à très épicé\nConcept magnifique',
     rating: 5,
-    reviewer: 'amina allali',
+    reviewer: 'Jamal Jamal',
     source: 'Google',
-    sourceUrl: 'https://fr.restaurantguru.com/Peri-Peri-Grill-Agadir-Bay-Agadir',
+    sourceUrl: 'https://maps.app.goo.gl/8ZL269ZGKrG9MXB4A',
+    topic: 'À chacun son feu',
+    translated: true,
   },
 ]
 
@@ -70,9 +74,9 @@ export const reputationThemes: ReputationTheme[] = [
 // Homepage shows verified review excerpts only. Labels in reputationThemes are
 // rendered nowhere on the homepage.
 export const reviewsSection = {
-  eyebrow: 'Guest feedback',
+  eyebrow: 'Les mots de nos clients',
   titleLines: [
-    { text: 'LOVED BY' },
-    { text: 'THE TABLE.', accent: true },
+    { text: 'VOUS EN' },
+    { text: 'REDEMANDEZ.', accent: true },
   ] as { text: string; accent?: boolean }[],
 }

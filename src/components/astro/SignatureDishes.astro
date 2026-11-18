@@ -1,5 +1,5 @@
 ---
-import { ArrowRight, Flame, Sparkles } from 'lucide-react';
+import { ArrowRight, BookOpen, Flame, Sparkles } from 'lucide-react';
 import { featuredDishes } from '../../content';
 import Container from '../ui/Container.astro';
 import PortionSticker from '../ui/PortionSticker.astro';
@@ -37,13 +37,15 @@ const theWrapster = featuredDishes.find((d) => d.id === 'the-wrapster')!;
 
       <a
         href="/menu"
-        class="group inline-flex items-center gap-2 self-start rounded-full border border-peri-red/30 bg-coal-900/80 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-cream backdrop-blur-md transition-all duration-300 hover:border-peri-red hover:bg-peri-red hover:text-cream hover:shadow-[0_4px_20px_rgba(231,55,31,0.4)] sm:self-end"
+        class="hero-button hero-button-menu hero-button-sm hero-button-inline self-start sm:self-end"
       >
-        <span>Découvrir toute la carte</span>
-        <ArrowRight
-          className="size-4 transition-transform duration-200 group-hover:translate-x-1"
-          aria-hidden="true"
-        />
+        <span class="hero-button-icon" aria-hidden="true">
+          <BookOpen className="size-3.5" />
+        </span>
+        <span class="hero-button-label">Découvrir toute la carte</span>
+        <span class="hero-button-arrow" aria-hidden="true">
+          <ArrowRight className="size-3.5" />
+        </span>
       </a>
     </div>
 

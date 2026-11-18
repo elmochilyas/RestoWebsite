@@ -1,8 +1,10 @@
 ---
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BookOpen, MapPin } from 'lucide-react';
+import { SiGlovo } from 'react-icons/si';
 
 interface Props {
-  variant?: 'primary' | 'secondary' | 'inverse';
+  variant?: 'menu' | 'glovo' | 'location' | 'primary' | 'secondary' | 'inverse';
+  size?: 'sm' | 'md';
   withArrow?: boolean;
   href?: string;
   class?: string;
@@ -14,6 +16,7 @@ interface Props {
 
 const {
   variant = 'primary',
+  size = 'md',
   withArrow = false,
   href,
   class: classNameProp,
@@ -21,18 +24,93 @@ const {
   ...rest
 } = Astro.props;
 
-const variants = {
-  primary: 'bg-peri-red text-cream hover:bg-ember',
-  secondary: 'border border-line-dark text-cream hover:border-cream/40 hover:bg-cream/10',
-  inverse: 'border border-line-light text-ink hover:border-ink/50 hover:bg-ink/5',
+const isHeroStyle = variant === 'menu' || variant === 'glovo' || variant === 'location';
+
+const standardVariants = {
+  primary: 'bg-peri-red text-cream hover:bg-ember rounded-full shadow-[0_4px_20px_rgba(231,55,31,0.3)]',
+  secondary: 'border border-line-dark text-cream hover:border-cream/40 hover:bg-cream/10 rounded-full',
+  inverse: 'border border-line-light text-ink hover:border-ink/50 hover:bg-ink/5 rounded-full',
 };
 
-const classes = `group inline-flex min-h-12 items-center justify-center gap-2.5 rounded-xl px-6 text-base font-bold tracking-wide transition-colors duration-200 sm:min-h-14 sm:px-7 ${variants[variant]} ${classNameProp || className || ''}`;
+const customClass = classNameProp || className || '';
+
+const variantClassMap = {
+  menu: 'hero-button-menu',
+  glovo: 'hero-button-glovo',
+  location: 'hero-button-location',
+};
 ---
 
 {
-  href ? (
-    <a href={href} class={classes} {...rest}>
+  isHeroStyle ? (
+    href ? (
+      <a
+        href={href}
+        class:list={[
+          'hero-button',
+          variantClassMap[variant as keyof typeof variantClassMap],
+          size === 'sm' && 'hero-button-sm',
+          customClass,
+        ]}
+        {...rest}
+      >
+        <span class="hero-button-icon" aria-hidden="true">
+          {variant === 'menu' ? (
+            <BookOpen className={size === 'sm' ? 'size-3.5' : 'size-[18px]'} />
+          ) : variant === 'glovo' ? (
+            <SiGlovo className={size === 'sm' ? 'size-3.5' : 'size-5'} />
+          ) : (
+            <MapPin className={size === 'sm' ? 'size-3.5' : 'size-[18px]'} />
+          )}
+        </span>
+        <span class="hero-button-label">
+          <slot />
+        </span>
+        <span class="hero-button-arrow" aria-hidden="true">
+          {variant === 'menu' ? (
+            <ArrowRight className={size === 'sm' ? 'size-3.5' : 'size-4'} />
+          ) : (
+            <ArrowUpRight className={size === 'sm' ? 'size-3.5' : 'size-4'} />
+          )}
+        </span>
+      </a>
+    ) : (
+      <button
+        class:list={[
+          'hero-button',
+          variantClassMap[variant as keyof typeof variantClassMap],
+          size === 'sm' && 'hero-button-sm',
+          customClass,
+        ]}
+        {...rest}
+      >
+        <span class="hero-button-icon" aria-hidden="true">
+          {variant === 'menu' ? (
+            <BookOpen className={size === 'sm' ? 'size-3.5' : 'size-[18px]'} />
+          ) : variant === 'glovo' ? (
+            <SiGlovo className={size === 'sm' ? 'size-3.5' : 'size-5'} />
+          ) : (
+            <MapPin className={size === 'sm' ? 'size-3.5' : 'size-[18px]'} />
+          )}
+        </span>
+        <span class="hero-button-label">
+          <slot />
+        </span>
+        <span class="hero-button-arrow" aria-hidden="true">
+          {variant === 'menu' ? (
+            <ArrowRight className={size === 'sm' ? 'size-3.5' : 'size-4'} />
+          ) : (
+            <ArrowUpRight className={size === 'sm' ? 'size-3.5' : 'size-4'} />
+          )}
+        </span>
+      </button>
+    )
+  ) : href ? (
+    <a
+      href={href}
+      class={`group inline-flex min-h-12 items-center justify-center gap-2.5 px-6 text-base font-bold tracking-wide transition-colors duration-200 sm:min-h-14 sm:px-7 ${standardVariants[variant]} ${customClass}`}
+      {...rest}
+    >
       <slot />
       {withArrow && (
         <ArrowRight
@@ -42,7 +120,10 @@ const classes = `group inline-flex min-h-12 items-center justify-center gap-2.5 
       )}
     </a>
   ) : (
-    <button class={classes} {...rest}>
+    <button
+      class={`group inline-flex min-h-12 items-center justify-center gap-2.5 px-6 text-base font-bold tracking-wide transition-colors duration-200 sm:min-h-14 sm:px-7 ${standardVariants[variant]} ${customClass}`}
+      {...rest}
+    >
       <slot />
       {withArrow && (
         <ArrowRight

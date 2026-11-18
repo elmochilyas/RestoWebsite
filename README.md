@@ -123,7 +123,7 @@ All business data is strictly separated from presentation logic:
 | **`menu.ts`** | Signature dishes featured on the homepage (Mega Feast, Flamin Wings, Chicken & Rice, The Wrapster). |
 | **`media.ts`** | Central registry of optimized WebP images with semantic alt text and status tracking. |
 | **`heatLevels.ts`** | Spice thermometer intensity definitions (Douce, Moyenne, Forte, Très forte). |
-| **`reviews.ts`** | Verified customer feedback excerpts sourced from Google and Tripadvisor. |
+| **`reviews.ts`** | Manually checked Google review excerpts, individual source links, and editorial topic labels. |
 | **`story.ts`** | Brand narrative beats outlining African Bird's Eye chilli roots, open-flame cooking, and Agadir location. |
 | **`navigation.ts`** | Primary anchor navigation items (`#menu`, `#story`, `#gallery`, `#reviews`, `#visit`). |
 

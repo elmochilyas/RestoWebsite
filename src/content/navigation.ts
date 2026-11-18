@@ -60,8 +60,8 @@ export const navLinks = [
     id: 'reviews', number: '04', label: 'AVIS', href: '/#reviews',
     labels: { fr: 'AVIS', en: 'REVIEWS', ar: 'الآراء' },
     subtitles: {
-      fr: '4.7★ · 98 avis vérifiés Google',
-      en: '4.7★ · 98 verified Google reviews',
+      fr: '4,8★ · 178 avis sur Google',
+      en: '4.8★ · 178 reviews on Google',
       ar: '4.7★ · تقييمات العملاء الموثوقة',
     },
     target: { kind: 'section', path: '/', sectionId: 'reviews' },

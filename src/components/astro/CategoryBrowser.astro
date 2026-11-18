@@ -20,6 +20,13 @@ const categoryLabels: Record<string, string> = {
   aria-label="Browse By Category"
   class="sticky top-[68px] sm:top-[76px] z-30 border-t-0 border-b border-white/10 bg-coal-950 py-3 sm:py-5 overflow-visible transition-[padding,background-color,box-shadow,border-color] duration-300 [&.is-stuck]:py-2 sm:[&.is-stuck]:py-2.5 [&.is-stuck]:bg-coal-950/98 [&.is-stuck]:backdrop-blur-2xl [&.is-stuck]:shadow-[0_12px_36px_rgba(0,0,0,0.85)] [&.is-stuck]:border-white/15"
 >
+  {/* ── Upward Header Backdrop Extension (Fuses sticky category bar with header on /menu) ── */}
+  <div
+    id="category-header-backdrop"
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-x-0 bottom-[calc(100%-1px)] -z-10 h-40 bg-coal-950/98 backdrop-blur-2xl opacity-0 transition-opacity duration-300 [nav.is-stuck_&]:opacity-100"
+  />
+
   <div class="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 overflow-visible">
     {/* Options Container: Full 5x2 / centered row at top, becomes compact horizontal strip when stuck */}
     <div
@@ -63,6 +70,16 @@ const categoryLabels: Record<string, string> = {
   </div>
 </nav>
 
+<style>
+  #category-header-backdrop {
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+  }
+  #category-nav.is-stuck #category-header-backdrop {
+    opacity: 1;
+  }
+</style>
+
 <script>
   function setupStickyCategoryNav() {
     const nav = document.getElementById('category-nav');
@@ -78,10 +95,14 @@ const categoryLabels: Record<string, string> = {
       // When sentinel moves above header bottom, nav is stuck
       const isStuck = sentinelRect.top <= threshold;
       navElement.classList.toggle('is-stuck', isStuck);
+      document.body.classList.toggle('category-stuck', isStuck);
     }
 
     window.addEventListener('scroll', updateStickyState, { passive: true });
     window.addEventListener('resize', updateStickyState, { passive: true });
+    window.addEventListener('pagehide', () => {
+      document.body.classList.remove('category-stuck');
+    });
     updateStickyState();
 
     // ScrollSpy to highlight active category in sticky bar

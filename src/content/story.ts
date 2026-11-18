@@ -1,5 +1,3 @@
-import { restaurant } from './restaurant'
-
 /**
  * Brand story — paraphrased from the documented brand narrative in
  * docs/01-research-and-content.md (peri-peri roots in Southern Africa,
@@ -8,27 +6,27 @@ import { restaurant } from './restaurant'
  * preparation claims.
  */
 export const storyContent = {
-  eyebrow: 'Our story',
+  eyebrow: 'Notre histoire',
   titleLines: [
-    { text: 'The fire behind' },
-    { text: 'The flavour.', accent: true },
+    { text: 'Tout commence' },
+    { text: 'par la flamme.', accent: true },
   ] as { text: string; accent?: boolean }[],
   beats: [
     {
       id: 'roots',
-      title: 'Roots',
-      body: "Peri-peri has roots in Southern Africa, where the African Bird’s Eye chilli became known for its distinctive heat.",
+      title: 'Des racines qui ont du caractère.',
+      body: 'Notre inspiration vient d’Afrique australe, berceau du péri-péri. Au cœur de cette histoire : le petit piment African Bird’s Eye et sa chaleur singulière.',
     },
     {
       id: 'fire',
-      title: 'Fire',
-      body: 'At Peri Peri Grill, the flame leads. Chicken is flame-grilled fresh over open heat, giving the food its warm, charred character.',
+      title: 'Le feu, notre signature.',
+      body: 'Du poulet frais, une flamme vive et ce goût de braisé qui fait toute la différence. Ici, le grill donne le ton à chaque bouchée.',
     },
     {
       id: 'heat',
-      title: 'Your heat',
-      body: 'From gentle warmth to full fire, the heat is yours to choose while peri-peri stays at the centre of the experience.',
+      title: 'Votre envie. Votre intensité.',
+      body: 'Tout en douceur ou franchement pimenté : choisissez votre chaleur. Le caractère péri-péri, lui, est toujours au rendez-vous.',
     },
   ],
-  statement: restaurant.tagline,
+  statement: 'Du feu. Du goût. Du partage.',
 } as const

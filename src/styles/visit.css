@@ -1,0 +1,145 @@
+.visit-section {
+  --visit-cream: #f7efdf;
+  --visit-muted: #bcab99;
+  position: relative;
+  padding-block: clamp(64px, 7vw, 104px);
+  scroll-margin-top: 96px;
+  background: #120d0a;
+  color: #f6ead7;
+}
+.visit-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; }
+.visit-eyebrow { display: flex; align-items: center; gap: 9px; color: #ffab78; font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.visit-title { margin-top: 18px; font-size: clamp(32px, 4.8vw, 62px); line-height: 1.08; letter-spacing: -.04em; }
+.visit-title > span { display: block; color: #ff7046; }
+.visit-intro { max-width: 310px; padding-bottom: 3px; font-size: 14px; line-height: 1.8; color: var(--visit-muted); }
+.visit-layout { display: grid; grid-template-columns: 1.35fr 1fr; grid-template-areas: 'map hours' 'contacts hours'; gap: 18px 24px; margin-top: 40px; }
+
+.visit-map-card { grid-area: map; min-width: 0; overflow: hidden; border: 1px solid #f6ead72b; border-radius: 24px; background: #1c1510; }
+.visit-map-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 20px 24px; }
+.visit-map-kicker { display: flex; align-items: center; gap: 6px; color: #bcab99; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; }
+.visit-map-heading h3 { margin-top: 5px; font-family: var(--font-editorial); font-size: 28px; font-weight: 450; line-height: 1.1; }
+.visit-map-icon { display: flex; width: 42px; height: 42px; flex-shrink: 0; align-items: center; justify-content: center; border: 1px solid #f6ead729; border-radius: 50%; color: #ffab78; }
+.visit-map-frame { position: relative; background: #e9e3d4; }
+.visit-map-frame iframe { display: block; width: 100%; height: 322px; border: 0; }
+.visit-map-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px; }
+.visit-address { display: flex; align-items: flex-start; gap: 10px; font-style: normal; font-size: 11px; line-height: 1.65; color: #bcab99; }
+.visit-address > svg { flex-shrink: 0; margin-top: 2px; color: #ffab78; }
+.visit-address strong { display: block; font-size: 12px; color: #f6ead7; }
+.visit-directions { display: inline-flex; min-height: 48px; flex-shrink: 0; align-items: center; justify-content: center; gap: 10px; padding: 11px 16px; border: 1px solid #ff96734d; border-radius: 999px; background: #b93422; color: #fff7e9; font-size: 12px; font-weight: 800; transition: background-color 180ms ease, border-color 180ms ease; }
+.visit-directions > svg:first-child { width: 16px; height: 16px; }
+
+.visit-contacts { display: grid; grid-area: contacts; grid-template-columns: 1fr 1fr; gap: 14px; }
+.visit-contact { display: grid; grid-template-columns: 36px minmax(0, 1fr) 16px; align-items: center; gap: 10px; min-width: 0; min-height: 88px; padding: 16px; border: 1px solid #f6ead72b; border-radius: 20px; background: #1c1510; transition: border-color 180ms ease, background-color 180ms ease; }
+.visit-contact-icon { display: flex; width: 36px; height: 36px; align-items: center; justify-content: center; border-radius: 50%; background: #ffab7812; color: #ffab78; }
+.visit-contact-copy { min-width: 0; }
+.visit-contact-copy strong { display: block; font-size: 13px; font-weight: 800; }
+.visit-contact-copy > span { display: block; margin-top: 5px; color: #bcab99; font-size: 10px; line-height: 1.4; }
+.visit-contact-arrow { color: #bcab99; }
+.visit-contact-whatsapp { background: #172018; border-color: #a4d6a92e; }
+.visit-contact-whatsapp .visit-contact-icon { background: #a4d6a917; color: #a9dfb3; }
+.visit-contact-whatsapp .visit-contact-arrow { color: #a9dfb3; }
+
+.visit-hours-card { position: relative; display: flex; grid-area: hours; min-width: 0; flex-direction: column; padding: 28px; border: 1px solid #fff7e94d; border-radius: 24px; scroll-margin-top: 100px; background: var(--visit-cream); color: #241712; }
+.visit-hours-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 22px; border-bottom: 1px solid #24171226; }
+.visit-hours-kicker { display: flex; align-items: center; gap: 7px; color: #795b48; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; }
+.visit-hours-heading h3 { margin-top: 12px; max-width: 240px; font-family: var(--font-display); font-size: clamp(23px, 2.2vw, 28px); line-height: 1.1; letter-spacing: -.035em; text-transform: uppercase; }
+.visit-hours-days { white-space: nowrap; }
+.visit-night-seal { display: flex; width: 82px; height: 82px; flex: 0 0 auto; flex-direction: column; align-items: center; justify-content: center; gap: 4px; border: 1px solid #b9342238; border-radius: 50%; background: #edddc4; color: #a42d1d; transform: rotate(7deg); }
+.visit-night-seal > span { font-size: 8px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+.visit-night-seal strong { font-size: 17px; line-height: 1; font-weight: 800; }
+.visit-hours-table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 13px; text-align: left; }
+.visit-hours-table caption { text-align: left; }
+.visit-hours-table thead { font-size: 9px; color: #795b48; text-transform: uppercase; letter-spacing: .08em; }
+.visit-hours-table thead th { padding: 0 10px 12px; font-weight: 700; }
+.visit-hours-table thead th:not(:first-child) { text-align: right; }
+.visit-hours-row { border-top: 1px solid #24171214; }
+.visit-hours-row th { padding: 12px 10px; font-weight: 600; }
+.visit-hours-row td { padding: 12px 10px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.visit-hours-row th > span { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.visit-hours-row-later time { color: #a42d1d; }
+.visit-hours-row[data-today] { background: #fffaf0; box-shadow: inset 3px 0 #b93422; }
+.visit-today-label { border-radius: 999px; background: #241712; color: #fff7e9; padding: 3px 5px; font-size: 7px; font-weight: 700; line-height: 1; }
+.visit-today-label[hidden] { display: none; }
+.visit-next-day { margin-left: 2px; color: #a42d1d; }
+.visit-hours-notes { margin-top: auto; padding-top: 18px; }
+.visit-friday-note { display: flex; align-items: flex-start; gap: 8px; padding: 12px; border: 1px solid #a42d1d24; border-radius: 12px; background: #edddc44d; color: #79513b; font-size: 10px; line-height: 1.6; }
+.visit-friday-note > svg { flex-shrink: 0; margin-top: 2px; color: #a42d1d; }
+.visit-hours-note { margin-top: 12px; font-size: 9px; line-height: 1.65; color: #795b48; }
+.visit-section :focus-visible { outline: 3px solid #ffba7c; outline-offset: 4px; }
+.visit-hours-card :focus-visible { outline-color: #a42d1d; }
+
+@media (hover: hover) {
+  .visit-directions:hover { background: #d34028; border-color: #ffab78; }
+  .visit-map-icon:hover { background: #ffab7814; }
+  .visit-contact:hover { background: #281d16; border-color: #ffab7880; }
+  .visit-contact-whatsapp:hover { background: #203326; border-color: #a9dfb380; }
+}
+
+@media (max-width: 1099px) {
+  .visit-layout { grid-template-columns: 1.1fr 1fr; gap: 16px; }
+  .visit-map-heading, .visit-map-footer { padding: 18px; }
+  .visit-map-footer { align-items: flex-start; flex-direction: column; }
+  .visit-directions { width: 100%; }
+  .visit-hours-card { padding: 22px; }
+  .visit-contact { grid-template-columns: 1fr 16px; gap: 12px; padding: 16px; }
+  .visit-contact-copy { grid-column: 1 / -1; grid-row: 2; }
+  .visit-contact-arrow { justify-self: end; }
+  .visit-contacts { gap: 12px; }
+}
+
+@media (max-width: 899px) {
+  .visit-heading { align-items: flex-start; flex-direction: column; gap: 22px; }
+  .visit-intro { max-width: 420px; }
+  .visit-layout { grid-template-columns: 1fr; grid-template-areas: 'map' 'contacts' 'hours'; margin-top: 30px; gap: 16px; }
+  .visit-map-footer { align-items: center; flex-direction: row; }
+  .visit-directions { width: auto; }
+  .visit-contact { grid-template-columns: 36px minmax(0, 1fr) 16px; }
+  .visit-contact-copy { grid-column: auto; grid-row: auto; }
+  .visit-hours-card { margin-top: 8px; padding: 28px; }
+  .visit-hours-heading h3 { max-width: none; font-size: 30px; }
+  .visit-hours-table { font-size: 13px; }
+  .visit-hours-row th, .visit-hours-row td { padding-block: 13px; }
+}
+
+@media (max-width: 639px) {
+  .visit-title { font-size: clamp(30px, 8.4vw, 48px); }
+  .visit-intro { font-size: 13px; }
+  .visit-map-heading { padding: 20px; }
+  .visit-map-heading h3 { font-size: 26px; }
+  .visit-map-frame iframe { height: 280px; }
+  .visit-map-footer { flex-direction: column; align-items: stretch; padding: 20px; gap: 18px; }
+  .visit-address { font-size: 12px; }
+  .visit-address strong { font-size: 13px; }
+  .visit-directions { min-height: 50px; }
+  .visit-contact { grid-template-columns: 1fr 16px; min-height: 120px; padding: 16px; }
+  .visit-contact-copy { grid-column: 1 / -1; grid-row: 2; }
+  .visit-contact-copy > span { font-size: 11px; }
+  .visit-hours-card { padding: 24px 20px; }
+  .visit-hours-heading h3 { max-width: 190px; font-size: 27px; }
+  .visit-night-seal { width: 72px; height: 72px; }
+  .visit-night-seal strong { font-size: 15px; }
+  .visit-hours-table { margin-top: 20px; font-size: 12px; }
+  .visit-hours-table thead { font-size: 8px; letter-spacing: .04em; }
+  .visit-hours-table thead th { padding-inline: 8px; }
+  .visit-hours-row th, .visit-hours-row td { padding: 13px 8px; }
+  .visit-hours-notes { padding-top: 20px; }
+  .visit-hours-note { font-size: 10px; }
+}
+
+@media (max-width: 359px) {
+  .visit-title { font-size: 29px; }
+  .visit-hours-card { padding-inline: 16px; }
+  .visit-hours-heading h3 { font-size: 20px; }
+  .visit-hours-kicker { font-size: 8px; letter-spacing: .06em; }
+  .visit-night-seal { width: 64px; height: 64px; }
+  .visit-hours-table { font-size: 11px; }
+  .visit-hours-table thead th, .visit-hours-row th, .visit-hours-row td { padding-inline: 6px; }
+  .visit-today-label { font-size: 6px; padding: 3px 4px; }
+  .visit-contact { padding: 14px; }
+  .visit-contact-copy > span { font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .visit-section * { transition: none; }
+  .visit-night-seal { transform: none; }
+}

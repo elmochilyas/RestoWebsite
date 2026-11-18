@@ -1,72 +1,117 @@
 ---
+import { ArrowRight, BookOpen, Flame, Leaf, MapPin, Sparkles } from 'lucide-react';
 import { storyContent } from '../../content';
-import { atmosphereFlames } from '../../content/media';
+import { atmosphereFlames, galleryMedia } from '../../content/media';
 import Container from '../ui/Container.astro';
-import Eyebrow from '../ui/Eyebrow.astro';
-
-function statementLines(text: string): [string, string] {
-  const words = text.split(' ');
-  const split = Math.ceil(words.length / 2);
-  return [words.slice(0, split).join(' '), words.slice(split).join(' ')];
-}
-
-const [statementLineA, statementLineB] = statementLines(storyContent.statement);
+const chapterIcons = [Leaf, Flame, Sparkles];
 ---
 
-<section
-  id="story"
-  class="scroll-mt-24 bg-paper py-20 text-ink sm:py-24 lg:py-32"
->
+<section id="story" class="story-section" aria-labelledby="story-title">
   <Container>
-    <header class="lg:max-w-[70%]">
-      <Eyebrow tone="light">{storyContent.eyebrow}</Eyebrow>
-
-      <h2 class="mt-5 font-display text-[clamp(2.125rem,5.5vw,4.75rem)] leading-[0.95] tracking-[-0.02em] uppercase text-ink sm:mt-6">
-        {storyContent.titleLines.map((line: { text: string; accent?: boolean }) => (
-          <span class={`block ${'accent' in line && line.accent ? 'text-peri-red' : ''}`}>
-            {line.text}
-          </span>
-        ))}
-      </h2>
-    </header>
-
-    <div class="mt-10 sm:mt-14 lg:mt-14 lg:grid lg:grid-cols-12 lg:gap-x-8">
-      <div class="lg:col-span-6">
-        <div class="lg:sticky lg:top-[120px]">
-          <div class="aspect-[4/3] overflow-hidden rounded-[20px] bg-coal-900 lg:aspect-[5/4]">
-            <img
-              src={atmosphereFlames.src}
-              alt={atmosphereFlames.alt}
-              loading="lazy"
-              decoding="async"
-              class="h-full w-full object-cover object-[55%_center]"
-            />
-          </div>
-        </div>
+    <header class="story-header">
+      <div>
+        <p class="story-eyebrow"><span aria-hidden="true"></span>{storyContent.eyebrow}</p>
+        <h2 id="story-title" class="story-title font-display">
+          {storyContent.titleLines.map((line) => (
+            <span class:list={['block', { 'story-title-accent': line.accent }]}>{line.text}</span>
+          ))}
+        </h2>
       </div>
-
-      <div class="mt-10 space-y-14 sm:mt-14 sm:space-y-16 lg:col-span-6 lg:col-start-7 lg:mt-0 lg:space-y-20">
-        {storyContent.beats.map((beat, index) => (
-          <div>
-            <div class="flex items-baseline gap-3">
-              <span class="text-[1rem] font-bold tracking-[0.16em] text-peri-red">
-                {String(index + 1).padStart(2, '0')}
-              </span>
-              <h3 class="font-display text-[1.125rem] uppercase tracking-[0.14em] text-ink sm:text-[1.25rem]">
-                {beat.title}
-              </h3>
-            </div>
-            <p class="mt-3 font-display text-[clamp(1.375rem,2vw,1.875rem)] font-[450] leading-[1.45] tracking-[-0.01em] uppercase text-ink">
-              {beat.body}
-            </p>
+      <p class="story-intro">Des racines africaines à votre table, à Agadir Bay. Une histoire de feu, de saveurs et de moments à partager.</p>
+    </header>
+    <div class="story-layout">
+      <div class="story-visual">
+        <figure class="story-photo">
+          <img src={atmosphereFlames.src} alt="Flammes vives au-dessus du grill" loading="lazy" decoding="async" width="800" height="960" />
+          <div class="story-seal" aria-hidden="true">
+            <span>LA SIGNATURE</span><Flame className="size-7" /><strong>PÉRI-PÉRI</strong>
           </div>
-        ))}
-
-        <p class="mt-12 border-t border-line-light pt-8 font-display text-[clamp(1.5rem,2.2vw,2.5rem)] leading-[0.95] tracking-[-0.02em] uppercase text-ink">
-          {statementLineA}
-          <span class="block">{statementLineB}</span>
-        </p>
+          <figcaption><span class="story-photo-kicker">NOTRE ÉLÉMENT.</span><span class="story-photo-quote">Le goût naît<br />dans le feu.</span></figcaption>
+        </figure>
+        <figure class="story-detail">
+          <img src={galleryMedia.charredChickenCloseup.src} alt="Poulet grillé aux marques de braise caramélisées" loading="lazy" decoding="async" width="320" height="320" />
+          <figcaption>Du grill à l’assiette.</figcaption>
+        </figure>
+        <p class="story-location"><MapPin className="size-3.5" aria-hidden="true" /> L’esprit péri-péri. Le cœur d’Agadir Bay.</p>
+      </div>
+      <div class="story-narrative">
+        <ol class="story-chapters">
+          {storyContent.beats.map((beat, index) => {
+            const Icon = chapterIcons[index];
+            return (
+              <li class="story-chapter">
+                <div class="story-chapter-marker" aria-hidden="true"><span>{String(index + 1).padStart(2, '0')}</span><Icon className="size-5" /></div>
+                <div><h3>{beat.title}</h3><p>{beat.body}</p></div>
+              </li>
+            );
+          })}
+        </ol>
+        <div class="story-invitation">
+          <p>{storyContent.statement}</p>
+          <a href="/menu" class="hero-button hero-button-menu hero-button-sm hero-button-inline">
+            <span class="hero-button-icon" aria-hidden="true">
+              <BookOpen className="size-3.5" />
+            </span>
+            <span class="hero-button-label">À vous de goûter</span>
+            <span class="hero-button-arrow" aria-hidden="true">
+              <ArrowRight className="size-3.5" />
+            </span>
+          </a>
+        </div>
       </div>
     </div>
   </Container>
 </section>
+
+<style>
+  .story-section { scroll-margin-top: 100px; padding-block: clamp(64px, 7vw, 104px); background: #f7efdf; color: #241712; }
+  .story-header { display: grid; gap: 24px; margin-bottom: 36px; }
+  .story-eyebrow { display: flex; align-items: center; gap: 10px; color: #a72c1b; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .18em; }
+  .story-eyebrow span { width: 28px; height: 2px; background: currentColor; }
+  .story-title { margin-top: 18px; font-size: clamp(30px, 4.6vw, 60px); line-height: 1.08; letter-spacing: -.035em; text-transform: uppercase; }
+  .story-title-accent { color: #bb321f; }
+  .story-intro { max-width: 32rem; font-size: 15px; line-height: 1.8; color: #6c5548; }
+  .story-layout { display: grid; gap: 36px; }
+  .story-visual { position: relative; min-width: 0; padding-bottom: 32px; }
+  .story-photo { position: relative; height: 400px; margin-right: 18px; overflow: hidden; border-radius: 22px 22px 4px 22px; background: #241712; }
+  .story-photo > img { width: 100%; height: 100%; object-fit: cover; object-position: 55% center; }
+  .story-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, #120d0a15 30%, #120d0ad9); pointer-events: none; }
+  .story-seal { position: absolute; z-index: 1; top: 20px; right: 20px; display: flex; width: 90px; height: 90px; flex-direction: column; align-items: center; justify-content: center; gap: 5px; border: 1px solid #f6ead770; border-radius: 50%; background: #aa2f20; color: #fff2df; transform: rotate(10deg); box-shadow: 0 0 0 5px #aa2f20; }
+  .story-seal > span { font-size: 7px; font-weight: 700; letter-spacing: .13em; }
+  .story-seal strong { font-size: 10px; letter-spacing: .07em; }
+  .story-photo > figcaption { position: absolute; z-index: 1; bottom: 28px; left: 24px; color: #fff2df; }
+  .story-photo-kicker { display: block; margin-bottom: 10px; font-size: 9px; font-weight: 700; letter-spacing: .2em; }
+  .story-photo-quote { display: block; font-family: var(--font-editorial); font-size: clamp(30px, 3.3vw, 44px); line-height: 1.08; font-style: italic; }
+  .story-detail { position: absolute; z-index: 2; right: 0; bottom: 44px; width: 34%; max-width: 190px; padding: 6px 6px 10px; border-radius: 4px; background: #fff9ed; box-shadow: 0 12px 30px #24171230; transform: rotate(6deg); }
+  .story-detail img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 2px; }
+  .story-detail figcaption { padding-top: 8px; text-align: center; color: #6c5548; font-size: 9px; font-weight: 600; }
+  .story-location { display: flex; align-items: center; gap: 7px; margin-top: 16px; font-size: 10px; color: #795e4e; }
+  .story-location :global(svg) { flex-shrink: 0; }
+  .story-narrative { align-self: center; min-width: 0; }
+  .story-chapters { margin: 0; padding: 0; list-style: none; }
+  .story-chapter { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 16px; padding-block: 24px; border-bottom: 1px solid #24171226; }
+  .story-chapter:first-child { padding-top: 0; }
+  .story-chapter-marker { display: flex; flex-direction: column; align-items: center; gap: 12px; color: #b73523; }
+  .story-chapter-marker > span { font-size: 11px; letter-spacing: .1em; font-weight: 800; }
+  .story-chapter h3 { font-size: 18px; line-height: 1.35; letter-spacing: -.025em; font-weight: 800; }
+  .story-chapter p { margin-top: 10px; color: #6c5548; font-size: 14px; line-height: 1.8; }
+  .story-invitation { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding-top: 26px; }
+  .story-invitation > p { font-family: var(--font-editorial); font-size: 24px; line-height: 1.25; font-style: italic; }
+  @media (min-width: 640px) {
+    .story-photo { height: 500px; }
+    .story-photo > figcaption { left: 32px; bottom: 36px; }
+    .story-chapter { gap: 24px; }
+    .story-chapter h3 { font-size: 20px; }
+    .story-chapter p { font-size: 15px; }
+    .story-location { font-size: 11px; }
+  }
+  @media (min-width: 1024px) {
+    .story-header { grid-template-columns: 1.5fr 1fr; align-items: end; gap: 64px; margin-bottom: 48px; }
+    .story-intro { max-width: 22rem; padding-bottom: 4px; }
+    .story-layout { grid-template-columns: 1.05fr 1fr; gap: clamp(40px, 5vw, 72px); align-items: center; }
+    .story-photo { height: 540px; margin-right: 32px; }
+    .story-detail { bottom: 32px; }
+    .story-seal { top: 28px; right: 28px; width: 104px; height: 104px; }
+    .story-invitation { align-items: flex-start; flex-direction: column; }
+  }
+</style>

@@ -1,14 +1,47 @@
-import type { GalleryItem } from '../types/content'
+import type { GalleryItem, GalleryReel } from '../types/content'
 import { galleryMedia } from './media'
 
 export const gallerySection = {
-  eyebrow: 'From the grill',
+  eyebrow: 'La vie côté grill',
   titleLines: [
-    { text: 'FIRE.' },
-    { text: 'FOOD.', accent: true },
-    { text: 'MOMENTS.' },
+    { text: 'LA FLAMME.' },
+    { text: 'L’AMBIANCE.', accent: true },
   ] as { text: string; accent?: boolean }[],
 }
+
+// Four 9:16 compositions, ready for owner-supplied videos. Existing generated
+// artwork is used only as a temporary photo preview; no fake video playback.
+export const galleryReels: GalleryReel[] = [
+  {
+    id: 'reel-flame', poster: galleryMedia.grillFlamesChicken.src,
+    alt: galleryMedia.grillFlamesChicken.alt,
+    title: 'Tout feu.', subtitle: 'Là où le goût commence.', objectPosition: '55% center',
+  },
+  {
+    id: 'reel-grill', poster: galleryMedia.chefGrillingChicken.src,
+    alt: galleryMedia.chefGrillingChicken.alt,
+    title: 'Tout le geste.', subtitle: 'Le grill donne le rythme.', objectPosition: '60% center',
+  },
+  {
+    id: 'reel-chicken', poster: galleryMedia.charredChickenCloseup.src,
+    alt: galleryMedia.charredChickenCloseup.alt,
+    title: 'Tout le goût.', subtitle: 'Doré. Braisé. Péri-péri.', objectPosition: 'center',
+  },
+  {
+    id: 'reel-sauces', poster: galleryMedia.periPeriSauces.src,
+    alt: galleryMedia.periPeriSauces.alt,
+    title: 'Votre touche.', subtitle: 'À chacun son intensité.', objectPosition: '55% center',
+  },
+]
+
+export const galleryPhotos = [
+  { id: 'gallery-place', image: galleryMedia.restaurantAtmosphere.src,
+    alt: galleryMedia.restaurantAtmosphere.alt, caption: 'L’esprit du lieu.',
+    label: '01 / L’AMBIANCE', objectPosition: '68% center' },
+  { id: 'gallery-table', image: galleryMedia.sharedTable.src,
+    alt: galleryMedia.sharedTable.alt, caption: 'Les bons moments se partagent.',
+    label: '02 / À TABLE', objectPosition: 'center' },
+]
 
 export const gallery: GalleryItem[] = [
   {

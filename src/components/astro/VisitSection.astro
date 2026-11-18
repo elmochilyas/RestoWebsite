@@ -1,10 +1,10 @@
 ---
-import { ArrowUpRight, Clock3, MapPin, Moon, Navigation, Phone } from 'lucide-react';
+import { ArrowUpRight, Clock3, Flame, MapPin, Moon, Navigation, Phone } from 'lucide-react';
 import { SiWhatsapp } from 'react-icons/si';
 import { restaurant } from '../../content';
 import type { DayName } from '../../types/content';
 import Container from '../ui/Container.astro';
-import Eyebrow from '../ui/Eyebrow.astro';
+import '../../styles/visit.css';
 
 const dayLabels: Record<DayName, string> = {
   monday: 'Lundi', tuesday: 'Mardi', wednesday: 'Mercredi', thursday: 'Jeudi',
@@ -19,168 +19,68 @@ const earliestOpen = [...hours].map((day) => day.open).sort()[0];
 const laterDays = hours.filter((day) => day.open > earliestOpen);
 const mapQuery = `${restaurant.name} - ${restaurant.locationName}, ${restaurant.address}`;
 const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=16&output=embed`;
+const [addressLine, ...addressRest] = restaurant.address.split(',').map((line) => line.trim());
 ---
 
-<section id="visit" aria-labelledby="visit-title" class="visit-section scroll-mt-24 bg-coal-950 py-16 text-cream sm:py-20 lg:py-24">
+<section id="visit" aria-labelledby="visit-title" class="visit-section">
   <Container>
-    <header class="grid gap-5 lg:grid-cols-[1.4fr_1fr] lg:items-end lg:gap-16">
-      <div>
-        <Eyebrow>Nous rendre visite</Eyebrow>
-        <h2 id="visit-title" class="mt-4 font-display text-[clamp(2rem,4.8vw,4.5rem)] leading-[1.05] tracking-[-0.025em] uppercase">
-          Rendez-vous à
-          <span class="block text-peri-red">{restaurant.locationName}.</span>
-        </h2>
-      </div>
-      <p class="max-w-sm text-base leading-relaxed text-cream/75 lg:pb-1 lg:text-lg">
-        Une pause déjeuner, un dîner entre amis ou une envie de grillades en fin de soirée. La flamme vous attend.
-      </p>
+    <header class="visit-heading">
+      <div><p class="visit-eyebrow"><MapPin className="size-4" aria-hidden="true" />On se retrouve ici</p><h2 id="visit-title" class="visit-title font-display">LE GOÛT A<span>SON ADRESSE.</span></h2></div>
+      <p class="visit-intro">Une pause déjeuner, une grande tablée ou une envie de grillades après le coucher du soleil. Rendez-vous à {restaurant.locationName}.</p>
     </header>
 
-    <div class="mt-9 grid gap-6 sm:mt-12 lg:grid-cols-[0.85fr_1.4fr] lg:gap-10">
-      <div class="flex flex-col justify-center py-1 lg:py-4">
-        <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-smoke">
-          <MapPin className="size-4 text-ember" aria-hidden="true" />
-          Votre spot à Agadir Bay
+    <div class="visit-layout">
+      <div class="visit-map-card">
+        <div class="visit-map-heading"><div><p class="visit-map-kicker"><MapPin className="size-3" aria-hidden="true" />{restaurant.locationName} · {restaurant.city}</p><h3>{restaurant.name}</h3></div><a class="visit-map-icon" href={restaurant.links.maps} target="_blank" rel="noopener noreferrer" aria-label="Agrandir la carte dans Google Maps (nouvel onglet)"><ArrowUpRight className="size-5" aria-hidden="true" /></a></div>
+        <div class="visit-map-frame"><iframe src={mapEmbedUrl} title={`Localisation de ${restaurant.name} à ${restaurant.locationName}, ${restaurant.city}`} loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
+        <div class="visit-map-footer">
+          <address class="visit-address"><MapPin className="size-4" aria-hidden="true" /><span><strong>{addressLine}</strong>{addressRest.join(', ')}</span></address>
+          <a class="visit-directions" href={restaurant.links.maps} target="_blank" rel="noopener noreferrer" aria-label="Obtenir l’itinéraire vers Peri Peri Grill sur Google Maps (nouvel onglet)"><Navigation aria-hidden="true" /><span>Obtenir l’itinéraire</span><ArrowUpRight className="size-4" aria-hidden="true" /></a>
         </div>
-        <h3 class="mt-4 font-editorial text-3xl font-medium tracking-tight sm:text-4xl">{restaurant.name}</h3>
-        <address class="mt-3 text-base leading-7 text-cream/75 not-italic">
-          {restaurant.address.split(',').map((line, index) => (
-            <>{index > 0 && (index === 1 ? <br /> : ', ')}{line.trim()}</>
-          ))}
-        </address>
-        <div class="mt-7 grid gap-3 sm:max-w-sm">
-          <a href={restaurant.links.maps} target="_blank" rel="noopener noreferrer"
-            aria-label="Obtenir l’itinéraire sur Google Maps (nouvel onglet)"
-            class="visit-action flex min-h-14 items-center justify-center gap-3 rounded-xl bg-[#d6311c] px-5 py-3 text-base font-bold text-white transition-colors hover:bg-[#c92d19]">
-            <Navigation className="size-5 shrink-0" aria-hidden="true" />
-            Obtenir l’itinéraire
-            <ArrowUpRight className="size-4 shrink-0" aria-hidden="true" />
-          </a>
-          <a href={restaurant.phoneHref} aria-label={`Appeler Peri Peri Grill au ${restaurant.phoneDisplay}`}
-            class="visit-action flex min-h-14 items-center justify-center gap-3 rounded-xl border border-line-dark px-4 py-3 font-bold transition-colors hover:border-cream/50 hover:bg-cream/5">
-            <Phone className="size-4 shrink-0 text-ember" aria-hidden="true" />
-            <span>{restaurant.phoneDisplay}</span>
-          </a>
-        </div>
-        {restaurant.links.whatsapp && (
-          <a href={restaurant.links.whatsapp} target="_blank" rel="noopener noreferrer"
-            aria-label="Nous écrire sur WhatsApp (nouvel onglet)"
-            class="mt-3 inline-flex min-h-11 items-center gap-2.5 self-start text-sm text-cream/75 underline decoration-cream/25 underline-offset-4 transition-colors hover:text-cream">
-            <SiWhatsapp className="size-4 shrink-0" aria-hidden="true" />
-            Une question ? Écrivez-nous
-            <ArrowUpRight className="size-3.5 shrink-0" aria-hidden="true" />
-          </a>
-        )}
       </div>
-      <div class="min-w-0 overflow-hidden rounded-2xl border border-line-dark bg-coal-900">
-        <iframe src={mapEmbedUrl} title={`Localisation de ${restaurant.name} à ${restaurant.locationName}, ${restaurant.city}`}
-          loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen
-          class="block h-[270px] w-full border-0 bg-cream sm:h-[330px] lg:h-[370px]" />
-        <a href={restaurant.links.maps} target="_blank" rel="noopener noreferrer"
-          aria-label="Agrandir la carte dans Google Maps (nouvel onglet)"
-          class="group flex min-h-16 items-center justify-between gap-4 border-t border-line-dark px-4 py-3 transition-colors hover:bg-cream/5 sm:px-5">
-          <span class="flex min-w-0 items-center gap-3">
-            <MapPin className="size-5 shrink-0 text-ember" aria-hidden="true" />
-            <span>
-              <span class="block text-sm font-bold">{restaurant.locationName}</span>
-              <span class="mt-0.5 block text-xs text-smoke">Agrandir dans Google Maps</span>
-            </span>
-          </span>
-          <ArrowUpRight className="size-5 shrink-0 text-cream/70 group-hover:text-cream" aria-hidden="true" />
-        </a>
-      </div>
-    </div>
 
-    <section id="opening-hours" aria-labelledby="hours-title" class="mt-10 scroll-mt-28 rounded-2xl bg-cream p-5 text-ink sm:mt-12 sm:p-8 lg:mt-14 lg:grid lg:grid-cols-[0.85fr_1.4fr] lg:gap-10 lg:p-10">
-      <div class="flex flex-col items-start">
-        <div class="flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.14em] text-ink/65">
-          <Clock3 className="size-4" aria-hidden="true" />
-          Horaires d’ouverture
-        </div>
-        <h3 id="hours-title" class="mt-4 font-display text-[clamp(1.625rem,3vw,2.5rem)] leading-tight uppercase">
-          {hours.length === 7 ? 'Le grill, 7 jours sur 7.' : 'À chacun son moment.'}
-        </h3>
-        {commonLateClose && (
-          <p class="mt-5 flex items-center gap-3 sm:mt-6">
-            <Moon className="size-7 shrink-0 text-[#b62f1c]" aria-hidden="true" />
-            <span>
-              <span class="block text-sm text-ink/70">Jusqu’à</span>
-              <span class="font-display text-4xl leading-tight tracking-tight sm:text-5xl">{commonLateClose}</span>
-              <span class="ml-2 text-sm text-ink/70">du matin</span>
-            </span>
-          </p>
-        )}
-        {laterDays.length > 0 && (
-          <p class="mt-5 max-w-xs text-sm leading-relaxed text-ink/75 lg:mt-auto lg:pt-7">
-            {laterDays.map((day) => (
-              <span class="block">Le {dayLabels[day.day].toLowerCase()}, on vous accueille à partir de <strong class="font-bold text-ink">{day.open}</strong>.</span>
-            ))}
-          </p>
-        )}
-      </div>
-      <div class="mt-7 min-w-0 border-t border-ink/15 pt-5 lg:mt-0 lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
-        <table class="hours-table w-full border-collapse text-left text-sm" aria-describedby="hours-note">
+      <nav class="visit-contacts" aria-label="Contacter le restaurant">
+        <a class="visit-contact" href={restaurant.phoneHref} aria-label={`Appeler Peri Peri Grill au ${restaurant.phoneDisplay}`}><span class="visit-contact-icon"><Phone className="size-[18px]" aria-hidden="true" /></span><span class="visit-contact-copy"><strong>Appeler</strong><span>{restaurant.phoneDisplay}</span></span><ArrowUpRight className="visit-contact-arrow size-4" aria-hidden="true" /></a>
+        <a class="visit-contact visit-contact-whatsapp" href={restaurant.links.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Écrire à Peri Peri Grill sur WhatsApp (nouvel onglet)"><span class="visit-contact-icon"><SiWhatsapp className="size-[18px]" aria-hidden="true" /></span><span class="visit-contact-copy"><strong>WhatsApp</strong><span>Une question ? Écrivez-nous.</span></span><ArrowUpRight className="visit-contact-arrow size-4" aria-hidden="true" /></a>
+      </nav>
+
+      <section id="opening-hours" class="visit-hours-card" aria-labelledby="hours-title">
+        <header class="visit-hours-heading"><div><p class="visit-hours-kicker"><Clock3 className="size-3.5" aria-hidden="true" />Horaires d’ouverture</p><h3 id="hours-title">{hours.length === 7 ? <>Le grill,<br /><span class="visit-hours-days">7 jours / 7.</span></> : 'À chacun son moment.'}</h3></div>{commonLateClose && <div class="visit-night-seal" aria-label={`Jusqu’à ${commonLateClose} du matin`}><Moon className="size-4" aria-hidden="true" /><span>Jusqu’à</span><strong>{commonLateClose}</strong></div>}</header>
+        <table class="visit-hours-table" aria-describedby="hours-note">
           <caption class="sr-only">Horaires hebdomadaires de Peri Peri Grill à Agadir</caption>
-          <thead>
-            <tr class="text-[10px] uppercase tracking-[0.12em] text-ink/60 sm:text-xs">
-              <th scope="col" class="pb-3 pl-3 font-bold">Jour</th>
-              <th scope="col" class="px-2 pb-3 text-right font-bold">Ouverture</th>
-              <th scope="col" class="pr-3 pb-3 text-right font-bold">Fermeture</th>
+          <thead><tr><th scope="col">Jour</th><th scope="col">Ouverture</th><th scope="col">Fermeture</th></tr></thead>
+          <tbody>{hours.map((day) => (
+            <tr data-opening-day={day.day} class:list={['visit-hours-row', { 'visit-hours-row-later': day.open > earliestOpen }]}>
+              <th scope="row"><span>{dayLabels[day.day]}<span class="visit-today-label" data-today-label hidden>Aujourd’hui</span></span></th>
+              <td><time>{day.open}</time></td><td><time>{day.close}</time>{day.closesNextDay && <span class="visit-next-day" aria-label="le lendemain">*</span>}</td>
             </tr>
-          </thead>
-          <tbody>
-            {hours.map((day) => (
-              <tr data-opening-day={day.day} class:list={['hours-row border-t border-ink/10', { 'hours-row-later': day.open > earliestOpen }]}>
-                <th scope="row" class="py-3 pl-3 font-semibold">
-                  <span class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    {dayLabels[day.day]}
-                    <span data-today-label hidden class="today-label rounded-full bg-ink px-1.5 py-0.5 text-[9px] font-bold text-cream">Aujourd’hui</span>
-                  </span>
-                </th>
-                <td class="px-2 py-3 text-right font-bold tabular-nums"><time>{day.open}</time></td>
-                <td class="py-3 pr-3 text-right font-semibold tabular-nums">
-                  <time>{day.close}</time>{day.closesNextDay && <span aria-label="le lendemain" class="ml-0.5 text-[#a32a18]">*</span>}
-                </td>
-              </tr>
-            ))}
-          </tbody>
+          ))}</tbody>
         </table>
-        <p id="hours-note" class="mt-4 text-xs leading-relaxed text-ink/65">
-          Heure locale d’Agadir.{anyClosesNextDay && ' * Fermeture le lendemain matin.'}
-        </p>
-      </div>
-    </section>
+        <div class="visit-hours-notes">
+          {laterDays.map((day) => <p class="visit-friday-note"><Flame className="size-3.5" aria-hidden="true" /><span>Le {dayLabels[day.day].toLowerCase()}, le grill s’allume à <strong>{day.open}</strong>.</span></p>)}
+          <p id="hours-note" class="visit-hours-note">Heure locale d’Agadir.{anyClosesNextDay && ' * Fermeture le lendemain matin.'}</p>
+        </div>
+      </section>
+    </div>
   </Container>
 </section>
 
-<style>
-  .visit-action:focus-visible { outline-color: var(--color-cream); }
-  .hours-row-later { color: #a32a18; }
-  .hours-row[data-today] { background: var(--color-paper); box-shadow: inset 3px 0 var(--color-peri-red); }
-  .today-label[hidden] { display: none; }
-  @media (max-width: 359px) {
-    .hours-table { font-size: 13px; }
-    .hours-table th, .hours-table td { padding-left: 6px; padding-right: 6px; }
-    .hours-table thead th { font-size: 9px; letter-spacing: 0.04em; }
-  }
-</style>
-
 <script>
-  // Use the restaurant's local day, including for visitors in other time zones.
-  function highlightToday() {
+  // Highlight the restaurant's local day without claiming live opening status.
+  function highlightVisitDay() {
     const today = new Intl.DateTimeFormat('en-US', {
       weekday: 'long', timeZone: 'Africa/Casablanca',
     }).format(new Date()).toLowerCase();
-    document.querySelectorAll<HTMLElement>('[data-opening-day]').forEach((row) => {
+    document.querySelectorAll<HTMLElement>('#visit [data-opening-day]').forEach((row) => {
       const isToday = row.dataset.openingDay === today;
       row.toggleAttribute('data-today', isToday);
       const label = row.querySelector<HTMLElement>('[data-today-label]');
       if (label) label.hidden = !isToday;
     });
   }
-  highlightToday();
-  window.setInterval(highlightToday, 60_000);
+  highlightVisitDay();
+  window.setInterval(highlightVisitDay, 60_000);
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) highlightToday();
+    if (!document.hidden) highlightVisitDay();
   });
 </script>

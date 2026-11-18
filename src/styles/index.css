@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './buttons.css';
 
 @theme {
   --color-coal-950: #120d0a;
@@ -114,5 +115,11 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
     scrollbar-color: rgba(246, 234, 215, 0.18) transparent;
+  }
+
+  /* When category is stuck on /menu, fuse header seamlessly with the extended backdrop */
+  body.category-stuck header > div > div {
+    background-color: color-mix(in oklab, var(--color-coal-900) 90%, transparent);
+    box-shadow: none;
   }
 }

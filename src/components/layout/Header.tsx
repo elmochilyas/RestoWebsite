@@ -7,6 +7,7 @@ import { restaurant } from '../../content'
 import { Container } from '../ui/Container'
 import { DesktopSegmentedLocaleSelector, LocaleSelector } from '../ui/LocaleStatus'
 import PeriPeriLogo from '../ui/PeriPeriLogo'
+import './Header.css'
 
 const EASE_OUT: [number, number, number, number] = [0.22, 1, 0.36, 1]
 const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -207,16 +208,6 @@ export function Header({ currentPath = '/' }: HeaderProps) {
 
   return (
     <>
-      {/* ── Scrolled Header Backdrop (Only on /menu to fuse seamlessly with sticky category bar) ── */}
-      {isMenuPage && (
-        <div
-          aria-hidden="true"
-          className={`pointer-events-none fixed inset-x-0 top-0 z-40 h-[70px] sm:h-[78px] bg-coal-950/98 backdrop-blur-2xl transition-opacity duration-300 border-b-0 shadow-none ${
-            scrolled ? 'opacity-100' : 'opacity-0'
-          }`}
-        />
-      )}
-
       {/* ── Desktop & Mobile Floating Island Header ── */}
       <header
         aria-hidden={mobileOpen ? 'true' : undefined}
@@ -227,7 +218,7 @@ export function Header({ currentPath = '/' }: HeaderProps) {
             className={`pointer-events-auto relative flex items-center justify-between rounded-2xl border px-3.5 py-2.5 sm:rounded-full sm:px-5 sm:py-2.5 transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ${
               scrolled
                 ? isMenuPage
-                  ? 'border-white/15 bg-coal-900/90 shadow-none backdrop-blur-2xl'
+                  ? 'border-white/15 bg-coal-950/95 shadow-[0_16px_40px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.05)] backdrop-blur-2xl [body.category-stuck_&]:bg-coal-900/90 [body.category-stuck_&]:shadow-none'
                   : 'border-white/15 bg-coal-950/95 shadow-[0_16px_40px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.05)] backdrop-blur-2xl'
                 : 'border-white/10 bg-coal-950/80 shadow-[0_12px_32px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.03)] backdrop-blur-xl'
             }`}
@@ -249,7 +240,7 @@ export function Header({ currentPath = '/' }: HeaderProps) {
             {/* Center: Desktop Navigation */}
             <nav
               aria-label="Navigation principale"
-              className="hidden items-center gap-6 xl:gap-8 lg:flex"
+              className="hidden items-center gap-4 xl:gap-6 lg:flex"
             >
               {navItems.map((item) => {
                 const active = isLinkActive(item)
@@ -279,17 +270,19 @@ export function Header({ currentPath = '/' }: HeaderProps) {
             {/* Right: Desktop Controls (Language, Location, Glovo) */}
             <div className="hidden items-center gap-2 xl:gap-2.5 lg:flex">
               {/* 1. Language Selector — Tertiary / Utility */}
-              <DesktopSegmentedLocaleSelector />
+              <DesktopSegmentedLocaleSelector className="header-locale" />
 
               {/* 2. Location Button — Secondary CTA */}
               <a
                 href={restaurant.links.maps}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex h-10 items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 xl:px-4 text-xs font-bold uppercase tracking-wider text-cream backdrop-blur-sm transition-all duration-200 hover:border-white/25 hover:bg-white/[0.08] hover:text-white focus-visible:outline-cream active:scale-95"
-                aria-label="Nous trouver à Agadir Bay sur Google Maps"
+                className="nav-action nav-action-location"
+                aria-label="Nous trouver à Agadir Bay sur Google Maps (nouvel onglet)"
               >
-                <MapPin className="size-4 text-peri-red transition-transform duration-200 group-hover:scale-110" aria-hidden="true" />
+                <span className="nav-action-icon" aria-hidden="true">
+                  <MapPin className="size-3.5" />
+                </span>
                 <span>Nous trouver</span>
               </a>
 
@@ -298,16 +291,16 @@ export function Header({ currentPath = '/' }: HeaderProps) {
                 href={restaurant.links.glovo}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex h-10 items-center gap-2 rounded-full bg-[#FFC244] px-4 xl:px-5 text-xs font-black uppercase tracking-wider text-[#121f19] shadow-[0_2px_10px_rgba(255,194,68,0.25)] transition-all duration-200 hover:bg-[#ffd166] hover:shadow-[0_4px_16px_rgba(255,194,68,0.4)] hover:scale-[1.02] focus-visible:outline-[#FFC244] active:scale-95"
-                aria-label="Commander Peri Peri Grill sur Glovo"
+                className="nav-action nav-action-order"
+                aria-label="Commander Peri Peri Grill sur Glovo (nouvel onglet)"
               >
-                <SiGlovo className="size-4 shrink-0 text-[#00A082]" aria-hidden="true" />
-                <span className="font-extrabold tracking-wide">Commander</span>
-                <ArrowUpRight
-                  className="size-3.5 shrink-0 text-[#007b65] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                  strokeWidth={2.5}
-                  aria-hidden="true"
-                />
+                <span className="nav-action-icon" aria-hidden="true">
+                  <SiGlovo className="size-3.5" />
+                </span>
+                <span>Commander <strong>Glovo</strong></span>
+                <span className="nav-action-external" aria-hidden="true">
+                  <ArrowUpRight className="size-3.5" />
+                </span>
               </a>
             </div>
 
@@ -317,10 +310,12 @@ export function Header({ currentPath = '/' }: HeaderProps) {
                 href={restaurant.links.glovo}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Commander sur Glovo"
-                className="inline-flex h-10 items-center gap-1.5 rounded-full bg-[#FFC244] px-4 text-xs font-black uppercase tracking-wider text-[#121f19] shadow-[0_2px_8px_rgba(255,194,68,0.25)] transition-transform active:scale-95"
+                aria-label="Commander sur Glovo (nouvel onglet)"
+                className="nav-action nav-action-order nav-action-mobile"
               >
-                <SiGlovo className="size-3.5 text-[#00A082]" aria-hidden="true" />
+                <span className="nav-action-icon" aria-hidden="true">
+                  <SiGlovo className="size-4" />
+                </span>
                 <span>Commander</span>
               </a>
 
@@ -331,7 +326,7 @@ export function Header({ currentPath = '/' }: HeaderProps) {
                 aria-label="Ouvrir le menu de navigation"
                 aria-expanded={mobileOpen}
                 aria-controls="mobile-navigation-dialog"
-                className="flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-cream transition-all duration-200 hover:border-white/25 hover:bg-white/[0.08] focus-visible:outline-cream active:scale-95"
+                className="nav-icon-button"
               >
                 <Menu className="size-5 text-cream" strokeWidth={2} aria-hidden="true" />
               </button>
@@ -379,12 +374,12 @@ export function Header({ currentPath = '/' }: HeaderProps) {
                 </a>
 
                 <div className="flex items-center gap-2.5">
-                  <LocaleSelector />
+                  <LocaleSelector className="mobile-menu-locale" />
                   <button
                     ref={closeButtonRef}
                     type="button"
                     onClick={() => closeMobileMenu()}
-                    className="flex size-10 shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/[0.05] text-cream transition-all duration-200 hover:border-peri-red hover:bg-peri-red/20 hover:text-peri-red focus-visible:outline-cream active:scale-95"
+                    className="nav-icon-button"
                     aria-label="Fermer le menu"
                   >
                     <X className="size-5" strokeWidth={2.2} aria-hidden="true" />
@@ -464,27 +459,26 @@ export function Header({ currentPath = '/' }: HeaderProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => closeMobileMenu(false)}
-                    className="group relative flex items-center justify-between gap-3 overflow-hidden rounded-2xl bg-gradient-to-r from-peri-red via-[#f04824] to-ember p-4 text-cream shadow-[0_8px_24px_rgba(231,55,31,0.45)] transition-all active:scale-[0.98]"
-                    aria-label="Commander en livraison sur Glovo"
+                    className="nav-action nav-action-order nav-action-card"
+                    aria-label="Commander en livraison sur Glovo (nouvel onglet)"
                   >
-                    <div className="flex items-center gap-3.5">
-                      <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-black/20 backdrop-blur-md">
-                        <SiGlovo className="size-6 text-[#FFC244]" aria-hidden="true" />
-                      </div>
-                      <div>
-                        <span className="block text-[0.625rem] font-black uppercase tracking-widest text-cream/80">
-                          Livraison rapide à domicile
-                        </span>
-                        <span className="font-display text-lg uppercase leading-tight tracking-tight text-cream">
-                          Commander sur Glovo
-                        </span>
-                      </div>
-                    </div>
-                    <ArrowUpRight
-                      className="size-5 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                      strokeWidth={2.5}
-                      aria-hidden="true"
-                    />
+                    <span className="nav-action-icon" aria-hidden="true">
+                      <SiGlovo className="size-6" />
+                    </span>
+                    <span className="nav-action-copy">
+                      <span className="nav-action-caption">
+                        Livraison à domicile
+                      </span>
+                      <span>
+                        Commander sur <strong>Glovo</strong>
+                      </span>
+                    </span>
+                    <span className="nav-action-external" aria-hidden="true">
+                      <ArrowUpRight
+                        className="size-5 shrink-0"
+                        strokeWidth={2.5}
+                      />
+                    </span>
                   </a>
 
                   {/* Secondary Directions Card */}
@@ -493,27 +487,26 @@ export function Header({ currentPath = '/' }: HeaderProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => closeMobileMenu(false)}
-                    className="group flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-3.5 text-cream transition-all hover:border-white/20 hover:bg-white/[0.08] active:scale-[0.98]"
-                    aria-label="Itinéraire vers le restaurant"
+                    className="nav-action nav-action-location nav-action-card"
+                    aria-label="Itinéraire vers le restaurant sur Google Maps (nouvel onglet)"
                   >
-                    <div className="flex items-center gap-3.5">
-                      <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-peri-red/15 text-peri-red">
-                        <MapPin className="size-5" strokeWidth={2.2} aria-hidden="true" />
-                      </div>
-                      <div>
-                        <span className="block text-[0.625rem] font-bold uppercase tracking-widest text-smoke">
-                          Office Centre · Agadir Bay
-                        </span>
-                        <span className="font-display text-base uppercase leading-tight tracking-tight text-cream">
-                          Itinéraire Google Maps
-                        </span>
-                      </div>
-                    </div>
-                    <ArrowUpRight
-                      className="size-5 shrink-0 text-white/40 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-cream"
-                      strokeWidth={2}
-                      aria-hidden="true"
-                    />
+                    <span className="nav-action-icon" aria-hidden="true">
+                      <MapPin className="size-5" strokeWidth={2.2} />
+                    </span>
+                    <span className="nav-action-copy">
+                      <span className="nav-action-caption">
+                        Office Centre · Agadir Bay
+                      </span>
+                      <span>
+                        Itinéraire Google Maps
+                      </span>
+                    </span>
+                    <span className="nav-action-external" aria-hidden="true">
+                      <ArrowUpRight
+                        className="size-5 shrink-0"
+                        strokeWidth={2}
+                      />
+                    </span>
                   </a>
 
                   {/* Instant Contact Pill Buttons */}
@@ -569,28 +562,40 @@ export function Header({ currentPath = '/' }: HeaderProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
             transition={{ duration: reduceMotion ? 0 : 0.22, ease: EASE_OUT }}
-            className="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-sm lg:hidden"
+            className="mobile-action-dock lg:hidden"
           >
-            <div className="flex items-center gap-2 rounded-full border border-white/15 bg-coal-950/92 p-1.5 shadow-[0_12px_32px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.06)] backdrop-blur-2xl">
+            <nav aria-label="Actions rapides" className="mobile-action-dock-inner">
               <a
                 href={restaurant.links.glovo}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-peri-red to-ember px-4 text-xs font-extrabold uppercase tracking-wider text-cream shadow-[0_4px_16px_rgba(231,55,31,0.4)] transition-transform active:scale-[0.98]"
+                className="nav-action nav-action-order nav-action-dock"
+                aria-label="Commander en livraison sur Glovo (nouvel onglet)"
               >
-                <SiGlovo className="size-4" aria-hidden="true" />
-                <span>Commander</span>
+                <span className="nav-action-icon" aria-hidden="true">
+                  <SiGlovo className="size-5" />
+                </span>
+                <span className="nav-action-copy">
+                  <span className="nav-action-caption">Livraison Glovo</span>
+                  <span>Commander</span>
+                </span>
               </a>
               <a
                 href={restaurant.links.maps}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-4 text-xs font-bold uppercase tracking-wider text-cream transition-colors hover:bg-white/[0.1] active:scale-[0.98]"
+                className="nav-action nav-action-location nav-action-dock"
+                aria-label="Itinéraire vers le restaurant sur Google Maps (nouvel onglet)"
               >
-                <MapPin className="size-3.5 text-peri-red" aria-hidden="true" />
-                <span>Itinéraire</span>
+                <span className="nav-action-icon" aria-hidden="true">
+                  <MapPin className="size-5" />
+                </span>
+                <span className="nav-action-copy">
+                  <span className="nav-action-caption">Agadir Bay</span>
+                  <span>Itinéraire</span>
+                </span>
               </a>
-            </div>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>

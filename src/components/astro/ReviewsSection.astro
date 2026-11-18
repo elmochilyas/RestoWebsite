@@ -1,143 +1,109 @@
 ---
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Flame, Quote, Star } from 'lucide-react';
+import { SiGoogle } from 'react-icons/si';
 import { restaurant, reviews, reviewsSection } from '../../content';
-import type { Review } from '../../types/content';
 import Container from '../ui/Container.astro';
-import Eyebrow from '../ui/Eyebrow.astro';
+import '../../styles/reviews.css';
 
-const { rating, reviewCount } = restaurant.publicInfo;
+const { rating, reviewCount, lastChecked } = restaurant.publicInfo;
 const ratingLabel = rating.toLocaleString('fr-FR');
-const featured = reviews[0];
-const supporting = reviews.slice(1);
-
-const SOURCE_META: Record<Review['source'], string> = {
-  Google: 'Google',
-  Tripadvisor: 'Tripadvisor',
-};
-
-const ratingPercent = Math.min(100, (rating / 5) * 100);
+const checkedLabel = new Intl.DateTimeFormat('fr-FR', {
+  day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
+}).format(new Date(`${lastChecked}T12:00:00Z`));
+const googleReviews = reviews.filter((review) => review.source === 'Google');
+const reviewsUrl = restaurant.links.googleReviews;
 ---
 
-<section
-  id="reviews"
-  class="scroll-mt-24 bg-cream py-20 text-ink sm:py-24 lg:py-32"
->
+<section id="reviews" class="reviews-section" aria-labelledby="reviews-title">
   <Container>
-    <header class="lg:flex lg:items-end lg:justify-between lg:gap-8">
-      <div>
-        <Eyebrow tone="light">{reviewsSection.eyebrow}</Eyebrow>
-        <h2 class="mt-4 font-display text-h2 uppercase text-ink sm:mt-6">
+    <header class="reviews-heading">
+      <div class="reviews-heading-copy">
+        <p class="reviews-eyebrow"><Flame className="size-4" aria-hidden="true" />{reviewsSection.eyebrow}</p>
+        <h2 id="reviews-title" class="reviews-title font-display">
           {reviewsSection.titleLines.map((line) => (
-            <span class={`block ${line.accent ? 'text-peri-red' : ''}`}>
-              {line.text}
-            </span>
+            <span class:list={['block', { 'reviews-title-accent': line.accent }]}>{line.text}</span>
           ))}
         </h2>
+        <p class="reviews-intro">On allume le grill. Vous écrivez la suite.</p>
       </div>
 
-      <div
-        aria-label={`Rated ${ratingLabel} out of 5 based on ${reviewCount} Google reviews`}
-        class="mt-8 lg:mt-0 lg:shrink-0"
-      >
-        <div class="flex items-baseline">
-          <span class="font-display text-[clamp(3.75rem,16vw,4.5rem)] leading-none tracking-[-0.02em] text-ink lg:text-[clamp(4.5rem,8vw,6.75rem)]">
-            {ratingLabel}
-          </span>
-          <span class="ml-3 font-body text-lg font-bold text-ink/60 sm:text-xl">
-            / 5
-          </span>
-        </div>
-
-        <!-- Fractional Star Bar -->
-        <div aria-hidden="true" class="relative mt-4 inline-flex">
-          <div class="flex gap-1 text-line-light">
-            {Array.from({ length: 5 }, () => (
-              <Star className="size-4" />
-            ))}
-          </div>
-          <div
-            class="absolute inset-y-0 left-0 flex gap-1 overflow-hidden"
-            style={`width: ${ratingPercent}%`}
-          >
-            {Array.from({ length: 5 }, () => (
-              <Star className="size-4 shrink-0 fill-current text-mustard" />
-            ))}
-          </div>
-        </div>
-
-        <p class="mt-3 text-sm font-bold uppercase tracking-[0.14em] text-ink/70">
-          {reviewCount} Google reviews
-        </p>
-      </div>
+      <a class="reviews-score" href={reviewsUrl} target="_blank" rel="noopener noreferrer"
+        aria-label={`${ratingLabel} sur 5, sur ${reviewCount} avis. Lire les avis sur Google (nouvel onglet)`}>
+        <div class="reviews-score-top"><span class="reviews-google-mark"><SiGoogle className="size-4" aria-hidden="true" /></span><span>Avis Google</span><ArrowUpRight className="size-4" aria-hidden="true" /></div>
+        <div class="reviews-score-main"><strong class="font-display">{ratingLabel}</strong><span>/ 5</span><div class="reviews-score-stars"><span class="reviews-rating-stars" aria-hidden="true"><span>★★★★★</span><span class="reviews-rating-stars-fill" style={`width: ${rating / 5 * 100}%`}>★★★★★</span></span><span>{reviewCount} avis</span></div></div>
+        <span class="reviews-score-caption">De belles tablées. De vrais retours.</span>
+      </a>
     </header>
 
-    <div class="mt-10 sm:mt-14 lg:mt-16 lg:grid lg:grid-cols-12 lg:gap-x-8">
-      <!-- Featured Review Card -->
-      <div class="lg:col-span-7">
-        {featured && (
-          <blockquote class="flex h-full flex-col justify-between rounded-[16px] bg-coal-950 p-8 text-cream sm:p-10 lg:p-12">
-            <div>
-              <div aria-hidden="true" class="mb-5 flex gap-1 sm:mb-6">
-                {Array.from({ length: 5 }, () => (
-                  <Star className="size-4 fill-current text-mustard" />
-                ))}
+    <div class="reviews-collection" data-reviews-collection>
+      <div class="reviews-track" id="reviews-track" role="region" aria-label="Sélection de trois avis clients Google" tabindex="0">
+        {googleReviews.map((review, index) => (
+          <article class:list={['review-ticket', { 'review-ticket-featured': index === 0 }]} aria-labelledby={`review-author-${review.id}`}>
+            <div class="review-ticket-body">
+              <div class="review-ticket-top"><span class="review-topic">{review.topic}</span><SiGoogle className="review-google-icon size-4" aria-label="Google" /></div>
+              <div class="review-stars" role="img" aria-label={`${review.rating} étoiles sur 5`}>
+                {Array.from({ length: 5 }, (_, star) => <Star className={`size-4 ${star < review.rating ? 'fill-current' : ''}`} aria-hidden="true" />)}
               </div>
-              <p class="font-editorial text-[clamp(1.5rem,2.4vw,2.5rem)] font-[450] leading-[1.3] tracking-[-0.01em]">
-                &ldquo;{featured.quote}&rdquo;
-              </p>
+              <Quote className="review-quote-mark" aria-hidden="true" />
+              <blockquote><p lang="fr">« {review.quote} »</p></blockquote>
+              <span class="review-excerpt">Extrait{review.translated ? ' · Traduction Google' : ''}</span>
             </div>
-            <footer class="mt-6 text-cream/70 sm:mt-8">
-              <div class="text-[0.9375rem] font-bold uppercase tracking-[0.14em]">
-                {featured.reviewer}
+            <footer class="review-ticket-footer">
+              <div class="review-author">
+                <span class="review-avatar" aria-hidden="true">{review.reviewer.split(' ').map((name) => name[0]).slice(0, 2).join('')}</span>
+                <div><p id={`review-author-${review.id}`} class="review-author-name">{review.reviewer}</p><span class="review-author-detail">{review.authorLabel ?? 'Avis sur Google'}</span></div>
               </div>
-              <div class="mt-1 text-[0.75rem] font-bold uppercase tracking-[0.16em]">
-                {SOURCE_META[featured.source]}
-                {featured.dateLabel ? ` · ${featured.dateLabel}` : ''}
-              </div>
+              <a class="review-source" href={review.sourceUrl} target="_blank" rel="noopener noreferrer" aria-label={`Lire l’avis de ${review.reviewer} sur Google (nouvel onglet)`}><ArrowUpRight className="size-[18px]" aria-hidden="true" /></a>
             </footer>
-          </blockquote>
-        )}
-      </div>
-
-      <!-- Supporting Review Cards -->
-      <div class="mt-4 sm:mt-6 md:grid md:grid-cols-2 md:gap-4 lg:col-span-5 lg:col-start-8 lg:mt-0 lg:grid-cols-1 lg:gap-y-6">
-        {supporting.map((review) => (
-          <blockquote class="flex h-full flex-col justify-between rounded-[14px] border border-line-light bg-paper p-6 text-ink sm:p-7">
-            <div>
-              <div aria-hidden="true" class="mb-4 flex gap-1">
-                {Array.from({ length: 5 }, () => (
-                  <Star className="size-4 fill-current text-mustard" />
-                ))}
-              </div>
-              <p class="font-editorial text-[clamp(1.1875rem,1.4vw,1.5625rem)] font-[450] leading-[1.45] tracking-[-0.01em]">
-                &ldquo;{review.quote}&rdquo;
-              </p>
-            </div>
-            <footer class="mt-6 text-ink/60 sm:mt-8">
-              <div class="text-[0.9375rem] font-bold uppercase tracking-[0.14em]">
-                {review.reviewer}
-              </div>
-              <div class="mt-1 text-[0.75rem] font-bold uppercase tracking-[0.16em]">
-                {SOURCE_META[review.source]}
-                {review.dateLabel ? ` · ${review.dateLabel}` : ''}
-              </div>
-            </footer>
-          </blockquote>
+          </article>
         ))}
+      </div>
+      <div class="reviews-mobile-controls" data-review-controls hidden>
+        <span class="reviews-mobile-hint">À vous de faire défiler</span>
+        <div class="reviews-pagination"><span data-review-position aria-live="polite" aria-atomic="true">1 / {googleReviews.length}</span><button type="button" data-review-prev aria-label="Avis précédent" disabled><ArrowLeft className="size-[18px]" aria-hidden="true" /></button><button type="button" data-review-next aria-label="Avis suivant"><ArrowRight className="size-[18px]" aria-hidden="true" /></button></div>
       </div>
     </div>
 
-    <a
-      href={restaurant.links.maps}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="group mt-10 inline-flex items-center gap-2 border-b border-peri-red pb-1 text-base font-bold text-peri-red transition-colors hover:text-ember sm:mt-12 lg:mt-14"
-    >
-      See Google reviews
-      <ArrowRight
-        aria-hidden="true"
-        className="size-5 transition-transform duration-200 group-hover:translate-x-1"
-      />
-    </a>
+    <div class="reviews-bottom">
+      <div><p class="reviews-invitation">Le prochain avis ? Peut-être le vôtre.</p><p class="reviews-disclosure">Sélection de {googleReviews.length} avis 5 étoiles. Note et avis relevés le {checkedLabel}.</p></div>
+      <a class="reviews-all-link" href={reviewsUrl} target="_blank" rel="noopener noreferrer" aria-label={`Lire les ${reviewCount} avis sur Google (nouvel onglet)`}><span>Lire les {reviewCount} avis sur Google</span><span class="reviews-all-link-arrow"><ArrowUpRight className="size-5" aria-hidden="true" /></span></a>
+    </div>
   </Container>
 </section>
+
+<script>
+  const collection = document.querySelector<HTMLElement>('[data-reviews-collection]');
+  if (collection) {
+    const track = collection.querySelector<HTMLElement>('.reviews-track')!;
+    const cards = Array.from(track.querySelectorAll<HTMLElement>('.review-ticket'));
+    const controls = collection.querySelector<HTMLElement>('[data-review-controls]')!;
+    const previous = collection.querySelector<HTMLButtonElement>('[data-review-prev]')!;
+    const next = collection.querySelector<HTMLButtonElement>('[data-review-next]')!;
+    const position = collection.querySelector<HTMLElement>('[data-review-position]')!;
+    let active = 0;
+    const sync = () => {
+      const trackLeft = track.getBoundingClientRect().left;
+      active = cards.reduce((nearest, card, index) =>
+        Math.abs(card.getBoundingClientRect().left - trackLeft) < Math.abs(cards[nearest].getBoundingClientRect().left - trackLeft) ? index : nearest, 0);
+      position.textContent = `${active + 1} / ${cards.length}`;
+      previous.disabled = active === 0;
+      next.disabled = active === cards.length - 1;
+    };
+    const go = (direction: number) => {
+      const card = cards[Math.max(0, Math.min(cards.length - 1, active + direction))];
+      track.scrollTo({ left: track.scrollLeft + card.getBoundingClientRect().left - track.getBoundingClientRect().left,
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+    };
+    controls.hidden = false;
+    previous.addEventListener('click', () => go(-1));
+    next.addEventListener('click', () => go(1));
+    track.addEventListener('scroll', sync, { passive: true });
+    track.addEventListener('keydown', (event) => {
+      if (event.target !== track || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+      event.preventDefault();
+      go(event.key === 'ArrowRight' ? 1 : -1);
+    });
+    new ResizeObserver(sync).observe(track);
+    sync();
+  }
+</script>

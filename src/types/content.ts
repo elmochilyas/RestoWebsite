@@ -69,6 +69,9 @@ export type Review = {
   source: 'Google' | 'Tripadvisor'
   dateLabel?: string
   sourceUrl?: string
+  topic?: string
+  authorLabel?: string
+  translated?: boolean
 }
 
 export type ReputationTheme = {
@@ -87,6 +90,19 @@ export type GalleryItem = {
   layoutRole?: 'anchor' | 'portrait' | 'action' | 'wide' | 'detail' | 'support'
   objectPosition?: string
   zoom?: number
+}
+
+export type GalleryReel = {
+  id: string
+  poster: string
+  alt: string
+  title: string
+  subtitle: string
+  objectPosition?: string
+  // Add an owner-approved MP4/WebM to enable video playback. A missing source
+  // renders an honest photo preview, without a misleading play button.
+  videoSrc?: string
+  captions?: { src: string; language: string; label: string }
 }
 
 export type HeatLevelId = 'douce' | 'moyenne' | 'forte' | 'tres-forte'
